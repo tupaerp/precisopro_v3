@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*  <title id="titulo" class="pro-titulo">@ViewData["Title"] - PrecisoPRO</title> *@
+    <title id="titulo" class="pro-titulo">@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!----======== CSS - PAULO ======== -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dev_paulo.css" asp-append-version="true" />
+
+    <!----======== CSS - MATHEUS ======== -->
+    <link href="~/css/css-layout.css" rel="stylesheet" />
+    <!----===== Boxicons CSS - MATHEUS ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+
+    <style>
+        ul li.nav-item {
+            transition: .90s !important;
+        }
+    </style>
+
+</head>
+<body>
+
+    <section class="fixed-top bg-white py-1 " id="Navbartop">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 dropdown-center">
+                    <ul class="nav">
+                        <li class="nav-item px-2">
+                            <img src="~/lib/IMG/PRECISO LUPA.png" class="img-fluid" width="40" />
+                        </li>
+
+                        <!----===== DROPDOWN INÍCIO ===== -->
+                        <li class="nav-item">
+                            <a class="nav-link text-black dropdown-toggle borderbutton" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
+                                <img src="~/lib/IMG/iníciocinza.png" class="img-fluid py-2" width="30" />
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Início</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <!----===== DROPDOWN FIM ===== -->
+                        <!----===== DROPDOWN INÍCIO ===== -->
+                        <li class="nav-item">
+                            <a class="nav-link text-white dropdown-toggle borderbutton" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
+
+                                <img src="~/lib/IMG/tabelascinza.png" class="img-fluid py-2" width="30" />
+
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Empresa">Empresa</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <!----===== DROPDOWN FIM ===== -->
+                        <!----===== DROPDOWN INÍCIO ===== -->
+                        <li class="nav-item">
+                            <a class="nav-link text-black dropdown-toggle borderbutton" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
+                                <img src="~/lib/IMG/cadastrar.png" class="img-fluid py-2" width="33" />
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Início</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <!----===== DROPDOWN FIM ===== -->
+
+                        <!----===== DROPDOWN INÍCIO ===== -->
+                        <li class="nav-item">
+                            <a class="nav-link text-white dropdown-toggle borderbutton" type="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">
+                                <img src="~/lib/IMG/notificacoescinza.png" class="img-fluid py-2" width="30" />
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Empresa">Empresa</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </li>
+                        <!----===== DROPDOWN FIM ===== -->
+
+                        <!----===== IMAGEM PERFIL ===== -->
+                        <li class="nav-item ms-auto">
+                            <img src="~/lib/IMG/usermobile.png" class="img-fluid" width="40" />
+                        </li>
+                        <!----===== FIM IMAGEM PERFIL ===== -->
+
+                      
+
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!----===== INÍCIO SIDEBAR ===== -->
+    <section>
+        <nav class="sidebar close" id="sideclose">
+            <!----===== DEFAULT  ===== -->
+            @await Component.InvokeAsync("Menu")
+            <!----===== DEFAULT ===== -->
+            <!----===== INÍCIO MENU SIDEBAR ===== -->
+            <!----===== INÍCIO MENU SIDEBAR ===== -->
+            <div class="menu-bar">
+                <div class="menu border-top">
+                    <ul>
+                        <li class="search-box ">
+                            <i data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Buscar" class='bx bx-search icon'></i>
+                            <input  type="text" class=" fs-6_5" placeholder="Buscar">
+                        </li>
+                    </ul>
+                    <!----===== INÍCIO TESTE DROPDOWN ===== -->
+                    <!----===== FIM TESTE DROPDOWN ===== -->
+                    <ul class="menu-links">
+                        <li class="nav-link">
+
+
+                            <a href="/home" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Início">
+
+                                <i class='bx bx-home-alt icon fs-4'></i>
+                              
+                                <span class="text nav-text fs-6_5">Início</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                                                     
+                             <a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cadastrar Empresa" asp-controller="Empresa" asp-action="Index">
+                                <i class="fa-regular fa-building  icon"></i>
+                                <span class="text nav-text fs-6_5">Cadastrar Empresas</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-link">
+                            <a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cadastrar Usuário" asp-controller="Usuario" asp-action="Index">
+                                <i class="fa-regular fa-user icon"></i>
+                                <span class="text nav-text fs-6_5">Cadastrar Usuários</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-link">
+                            <a data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Configurar CND's" asp-controller="Buscarcnds" asp-action="Index">
+                                <i class="fa-solid fa-laptop-file icon"></i>
+                                <span class="text nav-text fs-6_5">Configurar CNDs</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-link">
+                            <a href="#" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Notificações">
+                                <i class='bx bx-bell icon'></i>
+                                <span class="text pe-2 nav-text">Notificações</span>
+                                <span class="badge px-2 text-white  badge-pill badge-warning">3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bottom-content">
+                    <ul>
+                        <li class="">
+
+
+                            <a href="/login" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Sair">
+
+                                <i class='bx bx-log-out icon'></i>
+                                <span class="text nav-text">Sair</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li class="mode py-2">
+                            <div class="sun-moon">
+                                <i class='bx bx-moon icon moon'></i>
+                                <i class='bx bx-sun icon sun'></i>
+                            </div>
+                            <span class="mode-text text">Dark mode</span>
+
+
+                            <div class="toggle-switch">
+                                <span class="switch"></span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mode-img pt-2 border-top">
+                        <img src="lib/IMG/logobottom.png" width="190" />
+                    </div>
+                </div>
+            </div>
+
+        </nav>
+        <section class="home" id="renderbody">
+            <div class="container-fluid">
+                @* <button class="btn btn-danger" id="esconderMenu" onclick="esconderMenu()">FECHAR</button> *@
+                <div class="text">@RenderBody()</div>
+            </div>
+        </section>
+    </section>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+    <script src="~/lib/jquery/jquery.mask.min.js"></script>
+    <script src="~/lib/jquery/jquery.maskedinput.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/sidebar.js"></script>
+    <!----===== ATIVAR DICAS ===== -->
+    <script>
+        $(function () {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+            // $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+
+
+    <!----===== FIM ATIVAR DICAS ===== -->
+
+    <!----===== TESTE ===== -->
+    <script>
+        $(function () {
+            // Função para verificar se a barra lateral está fechada
+            function isSidebarClosed() {
+                return $('.sidebar').hasClass('close');
+            }
+
+            // Adiciona um ouvinte de eventos aos elementos com atributo 'data-bs-toggle="tooltip"'
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                // Exibe ou oculta o tooltip com base na condição
+                enabled: isSidebarClosed(),
+            });
+
+            // Adiciona um ouvinte de eventos para ajustar a visibilidade do tooltip ao abrir/fechar a barra lateral
+            $('.toggle').click(function () {
+                const tooltips = $('[data-bs-toggle="tooltip"]').data('bs.tooltip');
+                tooltips.forEach(tooltip => {
+                    tooltip.config.enabled = isSidebarClosed();
+                });
+            });
+        });
+    </script>
+
+
+    <!----===== FIM ATIVAR DICAS ===== -->
+    <!----===== SCRIPT PARA RESPONSIVIDADE ===== -->
+    <script>
+        // Verificar a largura da tela e modificar a classe do elemento
+        function verificarLarguraDaTela() {
+            //Pega os elementos que contem a classe prn-resp-td
+            var elementosTR = document.querySelectorAll('tr.prn-resp-td');
+
+            //verifica o tamanho da tela
+            if (window.innerWidth <= 700) {
+
+                // Loop para aplicar a mudança a cada elemento
+                elementosTR.forEach(function (elemento) {
+                    // Faça as alterações necessárias em cada elemento, adicionando fs-6
+                    elemento.classList.add('fs-6'); // Adiciona uma nova classe, se necessário
+
+                });
+
+
+            }
+            else {
+                // Loop para aplicar a mudança a cada elemento
+                elementosTR.forEach(function (elemento) {
+                    // Faça as alterações necessárias em cada elemento removendo a classe fs-6
+
+                    elemento.classList.remove('fs-6'); // Adiciona uma nova classe, se necessário
+                });
+            }
+
+        }
+
+        // Chamar a função quando a página é carregada
+        verificarLarguraDaTela();
+
+        // Chamar a função sempre que a largura da tela for alterada
+        window.addEventListener('resize', verificarLarguraDaTela);
+    </script>
+    <!----===== FIM SCRIPT PARA RESPONSIVIDADE ===== -->
+   
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -23,8 +23,8 @@
                             @if (TempData["Error"] != null)
                             {
                                <div class="col=lg-12">
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        <strong><i class="fa-solid fa-xmark fs-4"></i> </strong>  @TempData["Error"]
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-solid  fa-triangle-exclamation fs-5"></i> </strong>  @TempData["Error"]
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                </div>
@@ -36,12 +36,12 @@
                             {
                                 <div class="col=lg-12">
                                     <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                        <strong><i class="fa-solid fa-xmark fs-4"></i> </strong>  @TempData["Info"]
+                                        <strong><i class="fa-solid fa-circle-info fs-5"></i> </strong>  @TempData["Info"]
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 </div>
-                                
 
+                                
 
                             }
 
@@ -52,7 +52,7 @@
                             {
                                   <div class="col=lg-12">
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong><i class="fa-regular fa-thumbs-up fs-4"></i></strong> @TempData["Success"]
+                                        <strong><i class="fa-regular fa-thumbs-up fs-5"></i></strong> @TempData["Success"]
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@
                                 </div>
 
                             </div>
-                            <div class="row mt-2">
+                            <div class="row mt-2 mb-2">
                                
 
                                 <div id="botoes-acao" class="col-md-12">

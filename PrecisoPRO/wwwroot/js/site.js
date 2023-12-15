@@ -122,23 +122,48 @@ function chamarIncluirEmLote(id) {
 
 
 //}
+//essa tava funcionando
+//function enviarCNPJs() {
+//    // Coletar CNPJs dos inputs
+//    var cnpjs = [];
+//    $('form#formularioCNPJs input[type="text"]').each(function () {
+//        var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
+//        if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
+//            cnpjs.push(cnpjSemPontosBarras);
+//        }
+//    });
+
+//    // Construir a URL com os parâmetros de consulta
+//    var url = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs.join(',');
+
+//    alert(url);
+//    // Redirecionar para a action desejada
+//    window.location.href = url;
+//}
+//com ajax
 function enviarCNPJs() {
-    // Coletar CNPJs dos inputs
+    
     var cnpjs = [];
-    $('form#formularioCNPJs input[type="text"]').each(function () {
-        var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
-        if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
-            cnpjs.push(cnpjSemPontosBarras);
+        $('form#formularioCNPJs input[type="text"]').each(function () {
+            var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
+            if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
+                cnpjs.push(cnpjSemPontosBarras);
+            }
+        });
+    
+    
+    $.ajax({
+        data: { cnpjs: cnpjs.join(',') },
+        type: 'GET',
+        processData: true,
+        success: function () {
+
+            window.location.href = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs;
+
         }
     });
 
-    // Construir a URL com os parâmetros de consulta
-    var url = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs.join(',');
-
-    // Redirecionar para a action desejada
-    window.location.href = url;
-}
-
+};
 
 
 

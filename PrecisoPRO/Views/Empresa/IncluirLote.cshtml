@@ -1,0 +1,47 @@
+﻿﻿@using PrecisoPRO.Models.ViewModels;
+@model EmpresaViewModel
+@{
+    ViewData["Title"] = "Incluir";
+    Layout = "~/Views/Shared/_LayoutModais.cshtml";
+}
+<div class="container mt-5">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5">Incluir nova(s) EMPRESA(S) - Inclusão em Lote</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--AQUI CONTEUDO DO FORM-->
+                <div class="row  mt-1  bo rder-bottom">
+                    <div class="col-md-12 mb-2">
+                        <span class="fw-medium fs-6">Digite os CNPJ's Para inclusão</span>
+                    </div>
+                </div>
+                <form id="formularioCNPJs">
+                <div class="row">
+                   
+                    @for (int i = 1; i <= ViewBag.Ninput; i++)
+                    {
+                        <div class="col-lg-6 mt-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control cnpj" placeholder="@i" id="@i">
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="row border-top mt-3">
+                    <div class="col-md-12 mt-3 ">
+
+                        <button type="button" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="CANCELAR" class="btn btn-outline-danger align-middle float-md-end me-2"> <i class="fa-solid fa-ban"></i></button>
+                        <button type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="SALVAR" onclick="enviarCNPJs()" class="btn btn-outline-primary align-middle float-md-end me-2"><i class="fa-solid fa-floppy-disk"></i></button>
+
+
+                    </div>
+                </div>
+                </form>
+            </div> <!--Fim do body do modal-->
+        </div>
+    </div>
+</div>
+<!--FIM DO CONTAINER-->

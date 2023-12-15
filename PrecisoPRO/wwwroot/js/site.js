@@ -36,6 +36,7 @@ $(document).ready(function () {
     $('.celular').mask("(99)99999-9999");
     $('#cnpj').mask('99.999.999/9999-99');
     $('#Cnpj').mask('99.999.999/9999-99');
+    $('.cnpj').mask('99.999.999/9999-99');
     $('#telefone').mask('(99)99999-9999');
     $(".senha").mask("xxxxxxxxx");
     $("#cest").mask("99.999.99");
@@ -64,7 +65,111 @@ function chamarIncluir() {
 
     });
 }
+//adicionar registro de empresas em lote via api
+function chamarIncluirEmLote(id) {
+   
+    
+    
+    var cont = document.querySelector(".pro-titulo"); //pega o titulo
 
+    var controller = cont.innerText;
+
+    var url = "/" + controller + "/IncluirLote/" + id;
+
+
+    $("#modal").load("/" + controller + "/IncluirLote/" + id, function () {
+
+        $('#modal').modal("show");
+        // Adiciona um ouvinte de eventos para o evento 'hidden.bs.modal' do Bootstrap,
+        // que é disparado quando o modal é fechado
+        $('#modal').on('hidden.bs.modal', function () {
+            recarregarPagina();
+        });
+
+    });
+}
+
+
+//function enviarCNPJs() {
+//    //coletar cnpjs dos inputs
+//    var cnpjs = [];
+//    $('form#formularioCNPJs input[type="text"]').each(function () {
+//        var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
+//        if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
+//            cnpjs.push(cnpjSemPontosBarras);
+//        }
+//       /* alert(cnpjs);*/
+//    });
+
+//    //requisição  ajax
+//    // Fazer a requisição AJAX para o endpoint da API
+//    $.ajax({
+//        type: 'POST',
+//        url: '/Empresa/AdicionarEmpresaLote',
+//        contentType: 'application/x-www-form-urlencoded',
+//        data: { cnpjs: cnpjs.join(',') },
+//        success: function (data) {
+//           // // Processar os resultados
+//           //// console.log(data);
+//           // // Aqui você pode manipular os dados retornados da API, como salvar no banco de dados ou exibir na página.
+//           // window.location.href = '/Empresa/Index';  // Substitua com o URL correto
+//        },
+//        error: function (error) {
+//            console.error(error);
+//        }
+//    });
+
+
+
+//}
+//essa tava funcionando
+//function enviarCNPJs() {
+//    // Coletar CNPJs dos inputs
+//    var cnpjs = [];
+//    $('form#formularioCNPJs input[type="text"]').each(function () {
+//        var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
+//        if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
+//            cnpjs.push(cnpjSemPontosBarras);
+//        }
+//    });
+
+//    // Construir a URL com os parâmetros de consulta
+//    var url = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs.join(',');
+
+//    alert(url);
+//    // Redirecionar para a action desejada
+//    window.location.href = url;
+//}
+//com ajax
+function enviarCNPJs() {
+    
+    var cnpjs = [];
+        $('form#formularioCNPJs input[type="text"]').each(function () {
+            var cnpjSemPontosBarras = $(this).val().replace(/[^\d]/g, ''); // Remove pontos e barras
+            if (cnpjSemPontosBarras) { // Adicionar verificação se não é vazio
+                cnpjs.push(cnpjSemPontosBarras);
+            }
+        });
+    
+    
+    $.ajax({
+        data: { cnpjs: cnpjs.join(',') },
+        type: 'GET',
+        processData: true,
+        success: function () {
+
+            window.location.href = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs;
+
+        }
+    });
+
+};
+
+
+
+function recarregarPagina() {
+    location.reload(true); // O parâmetro true força o recarregamento do cache
+}
 
 //obsoleto, so esta aqui para documentação
 function chamarAssociar() {

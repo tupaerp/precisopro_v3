@@ -18,25 +18,46 @@
                 </div>
                 <div class="card-body">
                     <!--LINHA PARA BUSCAS-->
-                    <div class="row border-bottom py-2">
-                        <div class="row">
+                    <div class="row border-bottom">
+                        <div class="row align-items-center">
                             @if (TempData["Error"] != null)
                             {
-                               
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    <strong><i class="fa-solid fa-xmark fs-4"></i> </strong>  @TempData["Error"]
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
+                               <div class="col=lg-12">
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-solid  fa-triangle-exclamation fs-5"></i> </strong>  @TempData["Error"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                               </div>
+                              
 
                               
                             }
+                            @if (TempData["Info"] != null)
+                            {
+                                <div class="col=lg-12">
+                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-solid fa-circle-info fs-5"></i> </strong>  @TempData["Info"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+
+                                
+
+                            }
+
+                            
+
+
                             @if (TempData["Success"] != null)
                             {
-                               
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <strong><i class="fa-regular fa-thumbs-up fs-4"></i></strong> @TempData["Success"]
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                  <div class="col=lg-12">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-regular fa-thumbs-up fs-5"></i></strong> @TempData["Success"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
                                 </div>
+                               
+                               
 
                                 
                             }
@@ -120,12 +141,28 @@
                                 </div>
 
                             </div>
-                            <div class="row mt-2">
+                            <div class="row mt-2 mb-2">
                                
 
                                 <div id="botoes-acao" class="col-md-12">
                                    
                                      <div>
+
+                                       @*  <a onclick="chamarIncluirEmLote()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Adicionar por Lote" class="btn btn-outline-dark align-middle float-lg-end me-2"><i class="fa-solid fa-file-circle-plus fs-6"></i></a> *@
+
+
+                                        <div class="btn-group align-middle float-lg-end me-2">
+                                            <a  class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fs-6 fa-plus"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(5)" class="dropdown-item">5 Registros</a></li>
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(10)" class="dropdown-item">10 Registros</a></li>
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(15)" class="dropdown-item">15 Registros</a></li>
+                                              
+                                            </ul>
+                                        </div>
+
                                            <a onclick="chamarIncluir()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Novo Registro" class="btn btn-outline-success align-middle float-lg-end me-2"><i class="fa-solid fs-6 fa-plus"></i></a>
                                            <button type="submit"        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Buscar"        class="btn btn-outline-primary align-middle float-md-end me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
                                            <button type="submit"        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar"        class="btn btn-outline-secondary align-middle float-md-end me-2"> <i class="fa-solid fa-download"></i></button>

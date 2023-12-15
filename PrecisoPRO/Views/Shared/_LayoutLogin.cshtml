@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PrecisoPRO</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="~/lib/IMG/logo.png" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PrecisoPRO.styles.css" asp-append-version="true" />
 </head>
@@ -16,7 +18,19 @@
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+
+        //FECHAR O ALERT APOS A MENSAGEM
+        $(document).ready(function () {
+            setTimeout(function () {
+                $(".alert").fadeOut("slow", function () {
+
+                    $(this).alert('close');
+                });
+
+            }, 5000);
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

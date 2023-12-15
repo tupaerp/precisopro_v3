@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PrecisoPRO.Models;
+using PrecisoPRO.Models.ViewDb;
 using PrecisoPRO.Models.ViewModels;
 using System.Diagnostics;
 
@@ -22,7 +23,9 @@ namespace PrecisoPRO.Data
 
         public DbSet<RegimeJuridico> RegimeJuridicos { get; set; }
 
-        public DbSet<CndUfViewModel> CndsUf { get; set; }
-       
+        public DbSet<EmpresaViewGeral> EmpresasViewGeral { get; set; }
+
+
+
     }
 }

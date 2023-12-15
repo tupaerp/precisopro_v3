@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using PrecisoPRO.Interfaces;
 using PrecisoPRO.Models;
+using PrecisoPRO.Models.ViewDb;
 using PrecisoPRO.Models.ViewModels;
-using PrecisoPRO.Services;
 using System.Data;
-using System.Drawing;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using X.PagedList;
 
 namespace PrecisoPRO.Controllers
@@ -15,24 +17,27 @@ namespace PrecisoPRO.Controllers
         //contexto do banco de dados
         private readonly IEmpresaRepository _empresaRepository;
         private readonly IEstadoRepository _estadoRepository;
-        private readonly IAssociarEmpUf _associarEmpUf;
         private readonly INatJuridica _natJuridica;
         private readonly IRegimeJuridico _regimeJuridico;
 
+        private readonly IEmpresaViewGeral _empresaViewGeral;
+
+         HttpClient httpClient = new HttpClient();
 
         IEnumerable<Empresa>? listaEmpresas; //Lista enumerada
         IEnumerable<Estado>? listaEstados; //lista de estados
-        IEnumerable<NaturezaJuridica>? listaNatJuridica; //lista as naturezas juridicas
-        IEnumerable<AssociarEmpUf>? listaAssociarEmpUF;
+        IEnumerable<NaturezaJuridica>? listaNatJuridica; //lista as naturezas juridicas       
         IEnumerable<RegimeJuridico>? listaRegimeJuridicos;
+
+        IEnumerable<EmpresaViewGeral>? listaEmpresaViewGeral;
         int contSalvos = 0;
-        public EmpresaController(IEmpresaRepository empresaRepository, IEstadoRepository estadoRepository, IAssociarEmpUf associarEmpUf, INatJuridica natJuridica, IRegimeJuridico regJuridico)
+        public EmpresaController(IEmpresaRepository empresaRepository, IEstadoRepository estadoRepository, INatJuridica natJuridica, IRegimeJuridico regJuridico, IEmpresaViewGeral empresaViewGeral)
         {
             _empresaRepository = empresaRepository;
             _estadoRepository = estadoRepository;
-            _associarEmpUf = associarEmpUf;
             _natJuridica = natJuridica;
             _regimeJuridico = regJuridico;
+            _empresaViewGeral = empresaViewGeral;
 
 
         }   
@@ -205,91 +210,315 @@ namespace PrecisoPRO.Controllers
 
             return View(empresa);
         }
-        public async Task<IActionResult> AssociarIndividual(int id)
-        {
-            this.listaEstados = await _estadoRepository.GetAllAsyncNoTracking();
-            Empresa empresa = await _empresaRepository.GetByIdAsync(id);
 
-            //Busca os Estados
-            ViewBag.Estados = this.listaEstados.ToList();
-         
-            return View(empresa);
+        [HttpGet]
+        public async Task<IActionResult> IncluirLote(int id)
+        {
+            ViewBag.Ninput = id;
+            return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AssociarIndividual(string? empresa, List<string> checkUf)
+   
+        public async Task<IActionResult> AdicionarEmpresaLote(string cnpjs)
         {
-            this.listaAssociarEmpUF = await _associarEmpUf.GetAllAsyncNoTracking();
-            int id = int.Parse(empresa);
+            //VARIÁVEIS DE CONTROLE
+            int tmenor = 0;
+            int tcerto = 0;
+            int cnpjEncontrado = 0;
+            int cnpjNaoEncontrado = 0;
+            int cnpjErrado = 0;
+            int idNatJuridica = 0;
+            string atv_principal = null;
+            string socioResp = null;
+            string telefoneOrganizado = null;
+            string listaString = null;
+            int problemasAoSalvar = 0;
+            //Objeto que representa o retorno da apiexterna
+            List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
+            if (cnpjs != null) {
+                //LISTAS PARA VERIFICAÇÕES
+                this.listaEmpresaViewGeral = await _empresaViewGeral.GetAllAsyncNoTracking();
+                this.listaNatJuridica = await _natJuridica.GetAllAsyncNoTracking();
 
+                //receber a string
+                List<string> listaCnpjs = cnpjs.Split(',').ToList();
 
+                
 
-            if (ModelState.IsValid)
-            {
-                //agora percorrer o array e associar a empresa que veio no parametro a cada estado que foi selecionado
-                foreach (var valorCheckbox in checkUf)
+                //FOREACH PARA VARRER A LISTA DE CNPJS ENVIADA DO JS RETIRADA DA MODAL (INPUTS)
+                foreach(var cnpj in listaCnpjs)
                 {
-                    //buscar peplo id da empresa
-                    var jaExisteUf = this.listaAssociarEmpUF.Where(x => x.IdEstado.Equals(int.Parse(valorCheckbox)) && x.IdEmpresa.Equals(id)).ToList();
-
-
-                    if (jaExisteUf.Count == 0)
+                    if (string.IsNullOrEmpty(cnpj) || cnpj.Length == 14)
                     {
-                        var associar = new AssociarEmpUf
+                        //Formata o cnpj para busca
+                        string cnpjForm = FormatarCNPJ(cnpj);
+                        //para cada cnpj eu preciso verifiar se existe no banco: Um objeto do modelo especificado
+                        // vai receber um registro vindo do banco, se possuir o registro ele pula para o proximo, caso contrario segue o fluxo de execução
+                        EmpresaViewGeral? empresaViewGeral = this.listaEmpresaViewGeral.FirstOrDefault(x => x.Cnpj.Equals(cnpjForm));
+                        if (empresaViewGeral == null)
                         {
-                            IdEmpresa = id,
-                            IdEstado = int.Parse(valorCheckbox),
-                            Data_Cad = DateTime.Now
-                        };
-                        try
-                        {
-                            _associarEmpUf.Adicionar(associar);
-                            contSalvos++; //conta a quantidade de registros salvos
+                            //Se ele nao foi encontrado na base, entao precisamos cadastra-lo. A primeira coisa é pegar os dados via API
+                            // Construir a URL com base no CNPJ (para cada ncpj fornecido)
+                            string apiUrl = $"https://www.receitaws.com.br/v1/cnpj/{cnpj}";
+
+                            // Faça a chamada GET para a API externa
+                            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+                            // Verifique se a chamada foi bem-sucedida
+                            if (response.IsSuccessStatusCode)
+                            {
+
+                                string conteudo = await response.Content.ReadAsStringAsync();
+
+                                // Use JsonDocument para analisar o JSON dinamicamente
+                                using (JsonDocument document = JsonDocument.Parse(conteudo))
+                                {
+                                    Dictionary<string, object> resultado = new Dictionary<string, object>();
+
+                                    foreach (JsonProperty property in document.RootElement.EnumerateObject())
+                                    {
+                                        resultado.Add(property.Name, property.Value.ToString());
+                                    }
+
+                                    // Adicione o resultado à lista (cada empresa sera colocada nessa lista)
+                                    resultados.Add(resultado);
+                                }
+
+
+
+                            }
+                            else
+                            {
+                                //Se der ERRO
+                                cnpjErrado++;
+                            }
+
 
                         }
-                        catch (Exception e)
+                        else
                         {
-                            TempData["Error"] = "Probelmas ao salvar o registro, tente novamente";
-                            return RedirectToAction("Index");
+                            //encontrado - ja cadastrado
+                            cnpjEncontrado++;
                         }
-
                     }
+                    else
+                    {
+                        //se tiver menor que 14 ele soma
+                        tmenor++;
+                    }
+                    
+                   
 
 
-                }
-                if (contSalvos > 0)
+                }//fim for each para cada cnpj
+                
+
+            }//fim if cnpj diferente de null
+            else
+            {
+                TempData["Error"] = "Os campos vieram em branco";
+                return RedirectToAction("Index");
+            }
+
+
+            //neste ponto eu vou ter a lista com todos os cnpj e todos os valores
+            //vamos varrer o dicionario e continuar o fluxo
+            for(int i=0; i<(resultados.Count()); i++)
+            {
+                //verificar se deu alguma responsa ERROR
+                if (resultados[i]["status"].Equals("ERROR"))
                 {
-                    TempData["Success"] = "Registros ASSOCIADOS com sucesso: Qtd: " + contSalvos;
-                    return RedirectToAction("Index");
+                    //SOMA MAIS UM À VARIAVEL DE CONTROLE
+                    cnpjErrado++;
                 }
                 else
                 {
-                    TempData["Warning"] = "Nenhum registro ASSOCIADO";
-                    return RedirectToAction("Index");
+                    //pegar o responsavel ou socio
+                    //manda para a funcao e retorna o  nome do socio
+                    string socioRespEmpresa = BuscaSocioRet(resultados[i]["qsa"].ToString());
+
+
+                
+                    //tratar a string telefone
+                    string telefone = resultados[i]["telefone"].ToString();
+
+                    // TRATAR STRING TELEFONE
+                    string semEspacos = telefone.Replace(" ", "");
+
+                    // Pegar as 13 primeiras posições
+                    telefoneOrganizado = semEspacos.Length >= 13 ? semEspacos.Substring(0, 13) : semEspacos;
+                    //FIM TRATAR STRING TELEFONE
+
+                    //PEGAR A NATUREZA JURIDICA RETORNADA DA RESPOSTA DA API E BUSCAR O ID NO BANCO
+                    string natJuridicaString = resultados[i]["natureza_juridica"].ToString();
+                    string pattern = @"(\d+-\d+)";
+                    Match match = Regex.Match(natJuridicaString, pattern);
+
+                    if (match.Success)
+                    {
+                        // Acessar o valor correspondente ao padrão na expressão regular
+                        natJuridicaString = match.Groups[1].Value;
+
+
+                    }
+                    //agora precisamos buscar esse codigo dentro da tabela mysql
+                    NaturezaJuridica? naturezaJuridica = listaNatJuridica.FirstOrDefault(x => x.Codigo.Equals(natJuridicaString));
+
+                    //SE VIER NULO, PEGA O ID E COLOCA NA VARIAVEL DE APOIO, ELA SERA USADA PARA COMPOR O OBJETO A SER SALVO NO BANCO
+                    if (naturezaJuridica != null)
+                    {
+                        idNatJuridica = naturezaJuridica.Id;
+                    }
+
+                    //MONTAR O OBJETO PARA SER SALVO
+                    var empresa = new Empresa
+                    {
+
+                        Cnpj = resultados[i]["cnpj"].ToString(),
+                        Razao = resultados[i]["nome"].ToString(),
+                        Fantasia = resultados[i]["fantasia"].ToString(),
+                        NatJuridica = (idNatJuridica == 0) ? null : idNatJuridica,
+                        AtvPrincipal = (atv_principal == null) ? null : atv_principal,
+                        Cep = resultados[i]["cep"].ToString(),
+                        Endereco = resultados[i]["logradouro"].ToString(),
+                        Numero = resultados[i]["numero"].ToString(),
+                        Complemento = resultados[i]["complemento"].ToString(),
+                        Bairro = resultados[i]["bairro"].ToString(),
+                        Cidade = resultados[i]["municipio"].ToString(),
+                        UF = resultados[i]["uf"].ToString(),
+                        NomeResponsavel = socioRespEmpresa,
+                        Principal = 0,
+                        Telefone = telefoneOrganizado,
+                        Email = resultados[i]["email"].ToString(),
+                        SitCadastral = resultados[i]["situacao"].ToString(),
+                        MotDescCred = resultados[i]["motivo_situacao"].ToString(),
+                        DataAbertura = resultados[i]["abertura"].ToString(),
+                        Data_Cad = DateTime.Now,
+                        Data_Alt = DateTime.Now
+
+                    };
+                    try
+                    {
+                        _empresaRepository.Adicionar(empresa);
+                         tcerto++;
+                    }
+                    catch (Exception e)
+                    {
+                        problemasAoSalvar++;
+                    }
+
                 }
+            }//FIM DO FOR QUE VARRE O DICIONARIO
 
 
+
+            ///*VERIFICA AS VARIÁVEIS DE CONTROLE PARA RETORNAR À INDEX CADA ESTADO DO CADASTRO*/
+            if (tcerto > 0)
+            {
+                if(problemasAoSalvar > 0)
+                {
+                    if (cnpjErrado > 0)
+                    {
+                        TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
+                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString() + " - Não salvo: "+problemasAoSalvar.ToString();
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Não salvo: " + problemasAoSalvar.ToString();
+
+                        TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
+                    }
+                }
+                else
+                {
+                    if (cnpjErrado > 0)
+                    {
+                        TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
+                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString();
+                    }
+                    else
+                    {
+                        TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
+                    }
+                }
+                
 
 
             }
             else
             {
-                ModelState.AddModelError("", "ERRO");
+                if (problemasAoSalvar > 0)
+                {
+                    if (cnpjErrado > 0)
+                    {
+                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString() + " - Não salvo: " + problemasAoSalvar.ToString();
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Não salvo: " + problemasAoSalvar.ToString();
+
+                    }
+                }
+                else
+                {
+                    if (cnpjErrado > 0)
+                    {
+                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString();
+                    }
+                }
+               
+
             }
-            this.listaEstados = await _estadoRepository.GetAllAsyncNoTracking();
-            this.listaEmpresas = await _empresaRepository.GetAllAsyncNoTracking();
+            if (cnpjEncontrado > 0)
+            {
+                TempData["Info"] = "Cnpjs já cadastrados: " + cnpjEncontrado.ToString();
+            }
 
-            //Busca os Estados
-            ViewBag.Empresas = this.listaEmpresas.ToList();
-            ViewBag.Estados = this.listaEstados.ToList();
 
-            return View("Index");
+            return RedirectToAction("Index");
         }
+
         public async Task<IActionResult> Detalhes()
         {
             this.listaEmpresas = await _empresaRepository.GetAll();
             return PartialView();
         }
+
+        public string FormatarCNPJ(string cnpj)
+        {
+           
+            // Formatar o CNPJ
+            string cnpjFormatado = $"{cnpj.Substring(0, 2)}.{cnpj.Substring(2, 3)}.{cnpj.Substring(5, 3)}/{cnpj.Substring(8, 4)}-{cnpj.Substring(12, 2)}";
+
+            // Retornar o CNPJ formatado
+            return cnpjFormatado;
+        }
+
+        //Action para buscar o Socio da empresa no retorno da api
+        public string BuscaSocioRet(string inputStringSocio)
+        {
+            string socioResp = null;
+            //encontrar a posição
+            int startIndexSocio = inputStringSocio.IndexOf("\"nome\":");
+            if (startIndexSocio != -1)
+            {
+                // Encontrar a posição inicial da string do valor de "text"
+                int startValueIndexSocio = inputStringSocio.IndexOf("\"", startIndexSocio + 7);
+                if (startValueIndexSocio != -1)
+                {
+                    // Encontrar a posição final da string do valor de "text"
+                    int endValueIndexSocio = inputStringSocio.IndexOf("\"", startValueIndexSocio + 1);
+                    if (endValueIndexSocio != -1)
+                    {
+                        // Extrair a substring correspondente ao valor de "text"
+                        socioResp = inputStringSocio.Substring(startValueIndexSocio + 1, endValueIndexSocio - startValueIndexSocio - 1);
+
+
+                    }
+                }
+            }
+            return socioResp;
+        }
+
     }
 }
 

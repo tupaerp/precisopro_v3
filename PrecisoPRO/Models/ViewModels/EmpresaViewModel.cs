@@ -123,6 +123,8 @@ namespace PrecisoPRO.Models.ViewModels
         public string? Anotacoes { get; set; }
 
 
+        public string? DataAbertura { get; set; }
+
 
 
     }

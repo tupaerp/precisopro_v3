@@ -12,11 +12,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<IEstadoRepository, EstadoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IAssociarEmpUf, AssociarEmpUfRepository>();
-builder.Services.AddScoped<ICndUf, CndUfRepository>();
 builder.Services.AddScoped<INatJuridica, NatJuridicaRepository>();
 builder.Services.AddScoped<IRegimeJuridico, RegimeJuridicoRepository>();
+
+builder.Services.AddScoped<IEmpresaViewGeral, EmpresaViewGeralRepository>();
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+
 builder.Services.AddScoped<ISessao, Sessao>();
 builder.Services.AddSession(o =>
 {
@@ -63,5 +66,6 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

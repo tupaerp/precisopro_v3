@@ -11,6 +11,11 @@ namespace PrecisoPRO.Models
         [Column("ID")]
         public int Id { get; set; }
 
+
+        [Display(Name = "Código")]
+        [Column("CODIGO")]
+        public string? Codigo { get; set; }
+
         [Display(Name = "Nome")]
         [Column("NOME")]
         public string? Nome { get; set; }

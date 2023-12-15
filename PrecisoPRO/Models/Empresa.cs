@@ -207,6 +207,10 @@ namespace PrecisoPRO.Models
         [Column("ANOTACOES")]
         public string? Anotacoes { get; set; }
 
+        [Display(Name = "Data da Abertura")]
+        [Column("DATA_ABERTURA")]
+        public string? DataAbertura { get; set; }
+
         public ICollection<Usuario>? Usuarios { get; set; }
 
      

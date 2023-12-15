@@ -50,11 +50,20 @@ body {
 
 }
 
-
+/*Retirar o sublinhado dos elementos a, somente aparecer no hover (passar o maouse)*/
 a {
     text-decoration: none;
 }
 
-    a:hover {
-        text-decoration: underline;
+
+    /*Hover somente nos cards CND*/
+.card-cnd {
+    /* Adiciona uma transição suave para a sombra */
+    transition: box-shadow 0.3s ease-in-out;
+   
+}
+    .card-cnd:hover {
+       
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+

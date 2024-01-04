@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "ConsultarCnd";
+    Layout = "~/Views/Shared/_LayoutModais.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5">Incluir nova CND Estadual</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @*  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> *@
+                <!--AQUI CONTEUDO DO FORM-->
+                <form method="post" asp-action="IncluirCnd" id="CndEstadual">
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="inputState" class="form-label">Empresa (CNPJ)</label>
+                            <select class="form-select" name="cnpj" id="cnpj">
+                                <option value="">Escolha a Empresa</option>
+                                @foreach (var item in ViewBag.Empresas)
+                                {
+                                    
+                                        <option value="@item.Cnpj">@item.Cnpj - @item.Razao</option>
+                                    
+                                }
+                            </select>
+
+
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+
+                        <label  class="form-label">Estados</label>
+                        <hr class="m-0 mb-2" />
+                        @foreach (var estado in ViewBag.Estados)
+                        {
+                            <div class="col-md-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="checkUf" id="@estado.Uf" value="@estado.Uf">
+                                    <label class="form-check-label" for="inlineCheckbox1">@estado.Descricao</label>
+                                </div>
+                            </div>
+
+                        }
+
+
+                    </div>
+                  
+
+
+
+                    <!--DIV BOTO~ES-->
+                    <div class="row border-top mt-3">
+                        <div class="col-md-12 mt-3 ">
+
+                            <button type="button" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="CANCELAR" class="btn btn-outline-danger align-middle float-md-end me-2"> <i class="fa-solid fa-ban"></i></button>
+                            <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="SALVAR" class="btn btn-outline-primary align-middle float-md-end me-2"><i class="fa-solid fa-floppy-disk"></i></button>
+
+
+                        </div>
+                    </div>
+                </form><!--Fim do formulario de cadastro-->
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--FIM DO CONTAINER-->

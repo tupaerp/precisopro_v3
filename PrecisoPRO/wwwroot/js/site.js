@@ -55,6 +55,8 @@ function chamarIncluir() {
 
     var cont = document.querySelector(".pro-titulo"); //pega o titulo
 
+    alert(cont.innerText);
+
     var controller = cont.innerText;
 
   
@@ -65,6 +67,24 @@ function chamarIncluir() {
 
     });
 }
+
+
+function buscarCNDs() {
+
+    var cont = document.querySelector(".pro-titulo"); //pega o titulo
+
+    var controller = cont.innerText;
+
+    alert(cont.innerText);
+
+    $("#modal").load("/" + controller + "/ConsultarCnd/", function () {
+
+        $('#modal').modal("show");
+
+    });
+}
+
+
 //adicionar registro de empresas em lote via api
 function chamarIncluirEmLote(id) {
    

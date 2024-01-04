@@ -16,6 +16,7 @@ builder.Services.AddScoped<INatJuridica, NatJuridicaRepository>();
 builder.Services.AddScoped<IRegimeJuridico, RegimeJuridicoRepository>();
 
 builder.Services.AddScoped<IEmpresaViewGeral, EmpresaViewGeralRepository>();
+builder.Services.AddScoped<ICndEmpresaEstadual, CndEmpresaEstadualRepository>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -30,6 +31,10 @@ builder.Services.AddSession(o =>
 
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+
+//SErviço de busca de cnd
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddHttpClient<SefazToApiService>();
 
 
 

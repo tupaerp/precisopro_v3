@@ -4,6 +4,7 @@ using PrecisoPRO.Interfaces;
 using PrecisoPRO.Models;
 using PrecisoPRO.Models.ViewDb;
 using PrecisoPRO.Models.ViewModels;
+using PrecisoPRO.Services;
 using System.Data;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -13,7 +14,6 @@ namespace PrecisoPRO.Controllers
 {
     public class EmpresaController : Controller
     {
-       
         //contexto do banco de dados
         private readonly IEmpresaRepository _empresaRepository;
         private readonly IEstadoRepository _estadoRepository;
@@ -22,7 +22,7 @@ namespace PrecisoPRO.Controllers
 
         private readonly IEmpresaViewGeral _empresaViewGeral;
 
-         HttpClient httpClient = new HttpClient();
+        HttpClient httpClient = new HttpClient();
 
         IEnumerable<Empresa>? listaEmpresas; //Lista enumerada
         IEnumerable<Estado>? listaEstados; //lista de estados
@@ -31,13 +31,20 @@ namespace PrecisoPRO.Controllers
 
         IEnumerable<EmpresaViewGeral>? listaEmpresaViewGeral;
         int contSalvos = 0;
-        public EmpresaController(IEmpresaRepository empresaRepository, IEstadoRepository estadoRepository, INatJuridica natJuridica, IRegimeJuridico regJuridico, IEmpresaViewGeral empresaViewGeral)
+        public EmpresaController(
+            IEmpresaRepository empresaRepository, 
+            IEstadoRepository estadoRepository, 
+            INatJuridica natJuridica, 
+            IRegimeJuridico regJuridico, 
+            IEmpresaViewGeral empresaViewGeral
+            )
         {
             _empresaRepository = empresaRepository;
             _estadoRepository = estadoRepository;
             _natJuridica = natJuridica;
             _regimeJuridico = regJuridico;
             _empresaViewGeral = empresaViewGeral;
+            
 
 
         }   
@@ -519,6 +526,9 @@ namespace PrecisoPRO.Controllers
             return socioResp;
         }
 
+       
+
+        
     }
 }
 

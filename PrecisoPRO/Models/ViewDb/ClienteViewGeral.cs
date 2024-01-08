@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PrecisoPRO.Models.ViewDb
 {
     //Classe que representa a View do Banco de dados
-    [Table("EMPRESA_GERAL")]
-    public class EmpresaViewGeral
+    [Table("CLIENTE_GERAL")]
+    public class ClienteViewGeral
     {
         [Key]
         [Column("ID")]
-        public int? IdEmpresa { get; set; }
+        public int? IdCliente { get; set; }
 
         [Column("IE")]
         public string? Ie { get; set; }
@@ -59,9 +59,6 @@ namespace PrecisoPRO.Models.ViewDb
         [Column("REFERENCIA")]
         public string? Referencia { get; set; }
 
-        [Column("PRINCIPAL")]
-        public string? Principal { get; set; }
-
         [Column("TELEFONE")]
         public string? Telefone { get; set; }
 
@@ -76,7 +73,7 @@ namespace PrecisoPRO.Models.ViewDb
 
 
         [Column("DATA_ALT")]
-        public string? Data_Alt{ get; set; }
+        public string? Data_Alt { get; set; }
 
         [Column("SIT_CADASTRAL")]
         public string? SitCadastral { get; set; }
@@ -139,7 +136,20 @@ namespace PrecisoPRO.Models.ViewDb
         [Column("NOME_NTJ")]
         public string? NomeNtj { get; set; }
 
-       
+
+        [Column("EMPRESA_ID")]
+        public string? EmpresaId { get; set; }
+
+        [Column("EMPRESA_CNPJ")]
+        public string? EmpresaCnpj { get; set; }
+
+        [Column("EMPRESA_RAZAO")]
+        public string? EmpresaRazao { get; set; }
+
+        [Column("EMPRESA_FANTASIA")]
+        public string? EmpresaFantasia { get; set; }
+
+
 
 
     }

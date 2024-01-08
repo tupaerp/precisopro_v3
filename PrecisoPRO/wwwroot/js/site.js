@@ -56,7 +56,7 @@ function chamarIncluir() {
 
     var cont = document.querySelector(".pro-titulo"); //pega o titulo
 
-    alert(cont.innerText);
+ //   alert(cont.innerText);
 
     var controller = cont.innerText;
 
@@ -174,7 +174,7 @@ function enviarCNPJs() {
         processData: true,
         success: function () {
 
-            window.location.href = '/Empresa/AdicionarEmpresaLote?cnpjs=' + cnpjs;
+            window.location.href = '/Cliente/AdicionarClienteLote?cnpjs=' + cnpjs;
 
         }
     });
@@ -234,8 +234,20 @@ $(document).ready(function () {
         $.each($('input[aria-required="true"]'), function () {
             if (!this.value || this.value == '') {
 
-
                                
+                alert('Há campos obrigatórios sem preenchimento, verifique todas as abas!');
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+
+
+    $('#ClienteIncluir').on('submit', function (e) {
+        $.each($('input[aria-required="true"]'), function () {
+            if (!this.value || this.value == '') {
+
+
                 alert('Há campos obrigatórios sem preenchimento, verifique todas as abas!');
                 e.preventDefault();
                 return false;

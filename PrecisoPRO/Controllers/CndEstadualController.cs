@@ -18,17 +18,17 @@ namespace PrecisoPRO.Controllers
       
         //Serviço API Estadual
         private readonly SefazToApiService _sefazToApiService;
-        private readonly ICndEmpresaEstadual _cndEmpresaEstadual;
+        private readonly ICndClienteEstadual _cndEmpresaEstadual;
         private readonly IEmpresaRepository _empresaRepository;
         private readonly IEstadoRepository _estadoRepository;
 
         IEnumerable<Empresa>? listaEmpresas; //Lista enumerada
-        IEnumerable<CndEmpresaEstadual>? listaCndEmpresasEstaduais; //Lista enumerada
+        IEnumerable<CndClienteEstadual>? listaCndEmpresasEstaduais; //Lista enumerada
         IEnumerable<Estado>? listaEstados; //lista de estados
         //Construtor
         public CndEstadualController(
             SefazToApiService sefazToApiService, 
-            ICndEmpresaEstadual cndEmpresaEstadual,
+            ICndClienteEstadual cndEmpresaEstadual,
             IEmpresaRepository empresaRepository,
             IEstadoRepository estadoRepository
             )

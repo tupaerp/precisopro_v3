@@ -8,37 +8,37 @@ namespace PrecisoPRO.Controllers
 {
     public class CndFederalController : Controller
     {
-        private readonly ICndEmpresaFederal _cndEmpresaFederal;
-        private readonly IEmpresaRepository _empresaRepository;
+        private readonly ICndClienteFederal _cndClienteFederal;
+        private readonly IClienteRepository _clienteRepository;
         private readonly IEstadoRepository _estadoRepository;
 
-        IEnumerable<Empresa>? listaEmpresas; //Lista enumerada
-        IEnumerable<CndEmpresaFederal>? listaCndEmpresasFederais; //Lista enumerada
+        IEnumerable<Cliente>? listaClientes; //Lista enumerada
+        IEnumerable<CndClienteFederal>? listaCndClientesFederais; //Lista enumerada
         IEnumerable<Estado>? listaEstados; //lista de estados
 
 
         public CndFederalController(
-           ICndEmpresaFederal cndEmpresaFederal,
-           IEmpresaRepository empresaRepository,
+           ICndClienteFederal cndClienteFederal,
+           IClienteRepository clienteRepository,
            IEstadoRepository estadoRepository
            )
         {
-            _cndEmpresaFederal = cndEmpresaFederal;
-            _empresaRepository = empresaRepository;
+            _cndClienteFederal = cndClienteFederal;
+            _clienteRepository = clienteRepository;
             _estadoRepository = estadoRepository;
         }
         public async Task<IActionResult> Index(string cnpj, string razao, string cidade, string estado, string status, int numPagina = 1)
         {
-            this.listaEmpresas = await _empresaRepository.GetAllAsyncNoTracking();
-            this.listaCndEmpresasFederais = await _cndEmpresaFederal.GetAllAsyncNoTracking();
+            this.listaClientes = await _clienteRepository.GetAllAsyncNoTracking();
+            this.listaCndClientesFederais = await _cndClienteFederal.GetAllAsyncNoTracking();
             this.listaEstados = await _estadoRepository.GetAllAsyncNoTracking();
 
             //TO-DO -> FILTROS
 
             //Busca os Estados e empresas
             ViewBag.Estados = this.listaEstados.ToList();
-            ViewBag.Empresas = this.listaEmpresas.ToList();
-            return View(this.listaCndEmpresasFederais.ToPagedList(numPagina, 8));
+            ViewBag.Clientes = this.listaClientes.ToList();
+            return View(this.listaCndClientesFederais.ToPagedList(numPagina, 8));
 
             
         }

@@ -1,11 +1,11 @@
 ﻿@using X.PagedList.Mvc.Core
 @using X.PagedList.Web.Common
 @using X.PagedList
-@model X.PagedList.IPagedList<CndClienteFederal>
+@model X.PagedList.IPagedList<Cliente>
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "CndFederal";
+    ViewData["Title"] = "Cliente";
 }
 
 <div class="container-fluid">
@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div class="card align-middle">
                 <div class="card-header align-items-center">
-                    <span class="fs-5 fw-bolder text-black opacity-75">CND FEDERAL de Clientes - REGISTROS</span>
+                    <span class="fs-5 fw-bolder text-black opacity-75">Cadastro de Clientes  - REGISTROS</span>
 
                 </div>
                 <div class="card-body">
@@ -62,10 +62,10 @@
 
                             }
                         </div>
-                        <form asp-controller="CndFederal" asp-action="index" class="col-md-12">
+                        <form asp-controller="Cliente" asp-action="index" class="col-md-12">
                             <!--campos-->
                             <div class="row g-2">
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <label for="razao" class="form-label">CNPJ</label>
                                     @if (ViewBag.Cnpj == null)
                                     {
@@ -80,7 +80,7 @@
 
 
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-4">
                                     <label for="razao" class="form-label">Razão</label>
                                     @if (ViewBag.Razao == null)
                                     {
@@ -95,15 +95,19 @@
 
 
                                 </div>
-                                
-                                
+                                <div class="col-md-2">
+                                    <label for="fantasia" class="form-label">Fantasia</label>
+                                    @if (ViewBag.Fantasia == null)
+                                    {
+                                        @Html.TextBox("fantasia", null, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Fantasia" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("fantasia", (string)ViewBag.Fantasia, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Fantasia" })
+                                    }
 
-
-                            </div>
-
-                            <div class="row g-2 mt-2">
-
-                                <div class="col-md-4">
+                                </div>
+                                <div class="col-md-2">
                                     <label for="fantasia" class="form-label">Cidade</label>
 
                                     @if (ViewBag.Cidade == null)
@@ -115,7 +119,8 @@
                                         @Html.TextBox("cidade", (string)ViewBag.Cidade, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Cidade" })
                                     }
                                 </div>
-                                <div class="col-md-4">
+
+                                <div class="col-md-2">
                                     <label for="inputState" class="form-label">Estado</label>
                                     <select class="form-select" name="estado" id="estado">
                                         <option value="">Escolha a UF</option>
@@ -123,45 +128,19 @@
                                         {
                                             if (item.Uf == ViewBag.Estado)
                                             {
-                                                <option selected value="@item.Uf">@item.Descricao</option>
+                                                <option selected value="@item.Uf">@item.Uf</option>
                                             }
                                             else
                                             {
-                                                <option value="@item.Uf">@item.Descricao</option>
+                                                <option value="@item.Uf">@item.Uf</option>
                                             }
                                         }
                                     </select>
 
 
                                 </div>
-                                <div class="col-md-4">
-                                    <label for="inputState" class="form-label">Filtrar</label>
-                                    <select class="form-select" name="status" id="status">
-                                        <option value="">Escolha o Status</option>
-                                        <option value="1">PROCESSAMENTO OK - CERTIDÃO ENCONTRADA</option>
-                                        <option value="2">PROCESSAMENTO OK - CERTIDÃO EMITIDA</option>
-                                        <option value="3">PROCESSAMENTO OK - CERTIDÃO NÃO EMITIDA</option>
-                                        <option value="4">PROCESSAMENTO OK - CERTIDAO NAO EMITIDA. SITUAÇÃO CADASTRAL IMPEDITIVA</option>
-                                        <option value="5">PROCESSAMENTO OK - ANALISE INCONSISTENTE. TENTE NOVAMENTE</option>
-                                        <option value="6">PROCESSAMENTO OK - BASE DE APOIO A VERIFICACAO INDISPONIVEL - TENTE NOVAMENTE</option>
-                                        <option value="7">EM PREOCESSAMENTO: RETORNE NOVAMENTE COM A CHAVE</option>
-                                        <option value="8">CONTRIBUINTE NÃO CADASTRADO</option>
-                                        <option value="9">PARAMETROS INVÁLIDOS</option>
-                                        <option value="10">TIPO DE CONTRIBUINTE INVÁLIDO</option>
-                                        <option value="11">IDENTIFICAÇÃO DO CONTRIBUINTE INVÁLIDO</option>
-                                        <option value="12">CODIGO DE IDENTIFICACAO INVALIDO</option>
-                                        <option value="13">CHAVE INVÁLIDA</option>
-                                        <option value="14">CHAVE NÃO ENCONTRADA</option>
-                                        <option value="15">CHAVE PARA IMOVEL RURAL</option>
-                                        <option value="99">ERRO NO SERVIDOR</option>
-                                    </select>
-
-
-                                </div>
 
                             </div>
-
-
                             <div class="row mt-2 mb-2">
 
 
@@ -169,11 +148,26 @@
 
                                     <div>
 
-                                        <a onclick="buscarCNDs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Novo Registro" class="btn btn-outline-success align-middle float-lg-end me-2"><i class="fa-solid fs-6 fa-plus"></i></a>
+                                        @*  <a onclick="chamarIncluirEmLote()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Adicionar por Lote" class="btn btn-outline-dark align-middle float-lg-end me-2"><i class="fa-solid fa-file-circle-plus fs-6"></i></a> *@
+
+
+                                        <div class="btn-group align-middle float-lg-end me-2">
+                                            <a class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fs-6 fa-plus"></i>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(5)" class="dropdown-item">5 Registros</a></li>
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(10)" class="dropdown-item">10 Registros</a></li>
+                                                <li><a style="cursor:pointer;" onclick="chamarIncluirEmLote(15)" class="dropdown-item">15 Registros</a></li>
+
+                                            </ul>
+                                        </div>
+
+                                        <a onclick="chamarIncluir()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Novo Registro" class="btn btn-outline-success align-middle float-lg-end me-2"><i class="fa-solid fs-6 fa-plus"></i></a>
                                         <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Buscar" class="btn btn-outline-primary align-middle float-md-end me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
-                                        <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar" class="btn btn-outline-secondary align-middle float-md-end me-2"> <i class="fa-solid fa-download"></i></button>
+                                        <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar" class="btn btn-outline-secondary align-middle float-md-end me-2"><i class="fa-solid fa-download"></i></button>
                                         <a onclick="limparInputs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Limpar" class="btn btn-outline-warning align-middle float-md-end me-2"><i class="fa-solid fa-broom"></i></a>
-                                        
+
                                     </div>
 
                                 </div>
@@ -186,7 +180,7 @@
                     <!--Linha para tabela-->
                     <div class="row mt-2">
                         <div class="col-md-12 table-responsive">
-                            <partial name="_TabelaCndFederal" />
+                            <partial name="_TabelaClientePrincipal" />
                         </div>
                     </div> <!--fim linha tabela-->
                 </div>

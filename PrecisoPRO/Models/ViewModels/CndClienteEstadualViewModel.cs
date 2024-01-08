@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PrecisoPRO.Models.ViewModels
 {
-    public interface CndEmpresaEstadualViewModel
+    public interface CndClienteEstadualViewModel
     {
         public int Id { get; set; }
 

@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System;
 namespace PrecisoPRO.Models
 {
-    [Table("CNDEMPRESAS_F")]
-    public class CndEmpresaFederal
+    [Table("CNDCLIENTE_F")]
+    public class CndClienteFederal
     {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,14 +13,14 @@ namespace PrecisoPRO.Models
         public int Id { get; set; }
 
 
-        [Display(Name = "Empresa")]
-        [ForeignKey("Empresa")]
-        [Column("ID_EMPRESA")]
-        public int IdEmpresa { get; set; }
+        [Display(Name = "Cliente")]
+        [ForeignKey("Cliente")]
+        [Column("ID_CLIENTE")]
+        public int IdCliente { get; set; }
 
 
         //foreignkey
-        public Empresa? Empresa { get; set; }
+        public Cliente? Cliente { get; set; }
 
 
      

@@ -12,6 +12,8 @@ namespace PrecisoPRO.Controllers
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly ISessao _sessao;
 
+        Usuario novoUsuario;
+
         public LoginController(IUsuarioRepository usuarioRepository, ISessao sessao)
         {
             _usuarioRepository = usuarioRepository;
@@ -38,6 +40,7 @@ namespace PrecisoPRO.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    
                     Usuario usuario = _usuarioRepository.BuscarPorLogin(loginModel.Login);
 
                     if (usuario != null && usuario.Status != 2)

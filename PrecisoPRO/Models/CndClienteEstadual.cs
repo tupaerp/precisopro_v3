@@ -8,8 +8,8 @@ using System.Xml.Linq;
 namespace PrecisoPRO.Models
 
 {
-    [Table("CNDEMPRESAS_E")]
-    public class CndEmpresaEstadual
+    [Table("CNDCLIENTE_E")]
+    public class CndClienteEstadual
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
@@ -17,14 +17,14 @@ namespace PrecisoPRO.Models
         public int Id { get; set; }
 
 
-        [Display(Name = "Empresa")]
-        [ForeignKey("Empresa")]
-        [Column("ID_EMPRESA")]
-        public int IdEmpresa { get; set; }
+        [Display(Name = "Cliente")]
+        [ForeignKey("Cliente")]
+        [Column("ID_CLIENTE")]
+        public int IdCliente { get; set; }
 
 
         //foreignkey
-        public Empresa? Empresa { get; set; }
+        public Cliente? Cliente { get; set; }
 
 
         [Display(Name = "Número da CND")]

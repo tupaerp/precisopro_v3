@@ -10,15 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IEstadoRepository, EstadoRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<INatJuridica, NatJuridicaRepository>();
 builder.Services.AddScoped<IRegimeJuridico, RegimeJuridicoRepository>();
 
 builder.Services.AddScoped<IEmpresaViewGeral, EmpresaViewGeralRepository>();
-builder.Services.AddScoped<ICndEmpresaEstadual, CndEmpresaEstadualRepository>();
+builder.Services.AddScoped<IClienteViewGeral, ClienteViewGeralRepository>();
 
-builder.Services.AddScoped<ICndEmpresaFederal, CndEmpresaFederalRepository>();
+builder.Services.AddScoped<ICndClienteEstadual, CndClienteEstadualRepository>();
+
+builder.Services.AddScoped<ICndClienteFederal, CndClienteFederalRepository>();
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

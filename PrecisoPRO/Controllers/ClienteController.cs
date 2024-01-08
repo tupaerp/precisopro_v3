@@ -13,82 +13,99 @@ using X.PagedList;
 
 namespace PrecisoPRO.Controllers
 {
-    public class EmpresaController : Controller
+    public class ClienteController : Controller
     {
         //contexto do banco de dados
-        private readonly IEmpresaRepository _empresaRepository;
+        private readonly IClienteRepository _clienteRepository;
         private readonly IEstadoRepository _estadoRepository;
         private readonly INatJuridica _natJuridica;
         private readonly IRegimeJuridico _regimeJuridico;
 
-        private readonly IEmpresaViewGeral _empresaViewGeral;
+        private readonly IClienteViewGeral _clienteViewGeral;
 
         HttpClient httpClient = new HttpClient();
+        HttpResponseMessage response;
 
-        IEnumerable<Empresa>? listaEmpresas; //Lista enumerada
+        IEnumerable<Cliente>? listaClientes; //Lista enumerada
         IEnumerable<Estado>? listaEstados; //lista de estados
         IEnumerable<NaturezaJuridica>? listaNatJuridica; //lista as naturezas juridicas       
         IEnumerable<RegimeJuridico>? listaRegimeJuridicos;
 
-        IEnumerable<EmpresaViewGeral>? listaEmpresaViewGeral;
+        IEnumerable<ClienteViewGeral>? listaClienteViewGeral;
+
+
+        
         int contSalvos = 0;
-        public EmpresaController(
-            IEmpresaRepository empresaRepository, 
-            IEstadoRepository estadoRepository, 
-            INatJuridica natJuridica, 
-            IRegimeJuridico regJuridico, 
-            IEmpresaViewGeral empresaViewGeral
+        public ClienteController(
+            IClienteRepository clienteRepository,
+            IEstadoRepository estadoRepository,
+            INatJuridica natJuridica,
+            IRegimeJuridico regJuridico,
+            IClienteViewGeral clienteViewGeral
             )
         {
-            _empresaRepository = empresaRepository;
+            _clienteRepository = clienteRepository;
             _estadoRepository = estadoRepository;
             _natJuridica = natJuridica;
             _regimeJuridico = regJuridico;
-            _empresaViewGeral = empresaViewGeral;
-            
+            _clienteViewGeral = clienteViewGeral;
 
 
-        }   
-        public async Task<IActionResult> Index(string cnpj, string razao, string cidade, string fantasia, string estado, int numPagina = 1) 
+
+        }
+        public async Task<IActionResult> Index(string cnpj, string razao, string cidade, string fantasia, string estado, int numPagina = 1)
         {
-            this.listaEmpresas = await _empresaRepository.GetAllAsyncNoTracking();
+            this.listaClientes = await _clienteRepository.GetAllAsyncNoTracking();
+           
+            //Listar somente os clientes referente a empresa do usuário
+            //PEGAR OS DADOS DO USUÁRIO DA SESSÃO
+            string sessaoUsuario = HttpContext.Session.GetString("sessaoUsuarioLogado");
+            if (string.IsNullOrEmpty(sessaoUsuario)) return null;
+
+            Usuario usuario = JsonConvert.DeserializeObject<Usuario>(sessaoUsuario);
+
+
+            this.listaClientes = this.listaClientes.Where(x => x.EmpresaId.Equals(usuario.EmpresaId)).ToList();
+
+
             this.listaEstados = await _estadoRepository.GetAllAsyncNoTracking();
             this.listaRegimeJuridicos = await _regimeJuridico.GetAllAsyncNoTracking();
+
             if (cnpj != null)
             {
-                this.listaEmpresas = this.listaEmpresas.Where(x => x.Cnpj.Contains(cnpj)).ToList();
+                this.listaClientes = this.listaClientes.Where(x => x.Cnpj.Contains(cnpj)).ToList();
                 ViewBag.Cnpj = cnpj;
             }
 
             if (razao != null)
             {
-                this.listaEmpresas = this.listaEmpresas.Where(x=>x.Razao.Contains(razao)).ToList();
+                this.listaClientes = this.listaClientes.Where(x => x.Razao.Contains(razao)).ToList();
                 ViewBag.Razao = razao;
             }
-            if(cidade != null)
+            if (cidade != null)
             {
-                this.listaEmpresas = this.listaEmpresas.Where(x => x.Cidade.Contains(cidade)).ToList();
+                this.listaClientes = this.listaClientes.Where(x => x.Cidade.Contains(cidade)).ToList();
                 ViewBag.Cidade = cidade;
             }
             if (fantasia != null)
             {
-                this.listaEmpresas = this.listaEmpresas.Where(x => x.Fantasia.Contains(fantasia)).ToList();
+                this.listaClientes = this.listaClientes.Where(x => x.Fantasia.Contains(fantasia)).ToList();
                 ViewBag.Fantasia = fantasia;
             }
-           
-           
-            if(estado !=null && estado != "")
+
+
+            if (estado != null && estado != "")
             {
-                this.listaEmpresas = this.listaEmpresas.Where(x => x.UF.Contains(estado)).ToList();
+                this.listaClientes = this.listaClientes.Where(x => x.UF.Contains(estado)).ToList();
                 ViewBag.Estado = estado;
             }
-           
-           
+
+
             //Busca os Estados
             ViewBag.Estados = this.listaEstados.ToList();
             ViewBag.RegimesJuridicos = this.listaRegimeJuridicos.ToList();
             //passa inicialmente dois parametros, o numero da pagina e o tamanho da página
-            return View(this.listaEmpresas.ToPagedList(numPagina, 8));
+            return View(this.listaClientes.ToPagedList(numPagina, 8));
         }
 
         //create
@@ -105,73 +122,95 @@ namespace PrecisoPRO.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Incluir(EmpresaViewModel? empresaVM)
+        public async Task<IActionResult> Incluir(ClienteViewModel? clienteVM)
         {
-         
+            //PEGAR OS DADOS DO USUÁRIO DA SESSÃO
+            string sessaoUsuario = HttpContext.Session.GetString("sessaoUsuarioLogado");
+            if (string.IsNullOrEmpty(sessaoUsuario)) return null;
 
-            if (ModelState.IsValid)
+            Usuario usuario = JsonConvert.DeserializeObject<Usuario>(sessaoUsuario);
+
+            this.listaClienteViewGeral = await _clienteViewGeral.GetAllAsyncNoTracking();
+
+
+
+            // vai receber um registro vindo do banco, se possuir o registro ele pula para o proximo, caso contrario segue o fluxo de execução
+            this.listaClienteViewGeral = this.listaClienteViewGeral.Where(x => x.Cnpj.Equals(clienteVM.Cnpj.ToString()) && x.EmpresaId.Equals(usuario.EmpresaId.ToString())).ToList();
+
+            if (this.listaClienteViewGeral == null || this.listaClienteViewGeral.Count() == 0)
             {
-               
-                var empresa = new Empresa
+                if (ModelState.IsValid)
                 {
-                    Ie = empresaVM.Ie,
-                    Im = empresaVM.Im,
-                    Cnpj = empresaVM.Cnpj,
-                    Razao = empresaVM.Razao,
-                    NMei = empresaVM.NMei,
-                    Fantasia = empresaVM.Fantasia,
-                    NatJuridica = empresaVM.NatJuridica,
-                    RegJuridico = empresaVM.RegJuridico,
-                    AtvPrincipal = empresaVM.AtvPrincipal,
-                    Cep = empresaVM.Cep,
-                    Endereco = empresaVM.Endereco,
-                    Numero = empresaVM.Numero,
-                    Complemento = empresaVM.Complemento,
-                    Bairro = empresaVM.Bairro,
-                    Cidade = empresaVM.Cidade,
-                    UF = empresaVM.UF,
-                    Referencia = empresaVM.Referencia,
-                    Principal = empresaVM.Principal,
-                    Telefone = empresaVM.Telefone,
-                    Celular = empresaVM.Celular,
-                    Email = empresaVM.Email,
-                    SitCadastral = empresaVM.SitCadastral,
-                    MotDescCred = empresaVM.MotDescCred,
-                    Nire = empresaVM.Nire,
-                    NomeContador = empresaVM.NomeContador,
-                    CrcContador = empresaVM.CrcContador,
-                    NomeResponsavel = empresaVM.NomeResponsavel,
-                    CrcResponsavel = empresaVM.CrcResponsavel,
-                    TelAlternativo = empresaVM.TelAlternativo,
-                    CelAlternativo = empresaVM.CelAlternativo,
-                    EmailAlternativo = empresaVM.EmailAlternativo,
-                    LoginDteSefaz = empresaVM.LoginDteSefaz,
-                    SenhaDteSefaz = empresaVM.SenhaDteSefaz,
-                    CpfRepresentante = empresaVM.CpfRepresentante,
-                    Anotacoes = empresaVM.Anotacoes,
-                    Data_Cad = DateTime.Now,
-                    Data_Alt = DateTime.Now
+
+                    var cliente = new Cliente
+                    {
+                        Ie = clienteVM.Ie,
+                        Im = clienteVM.Im,
+                        Cnpj = clienteVM.Cnpj,
+                        Razao = clienteVM.Razao,
+                        NMei = clienteVM.NMei,
+                        Fantasia = clienteVM.Fantasia,
+                        NatJuridica = clienteVM.NatJuridica,
+                        RegJuridico = clienteVM.RegJuridico,
+                        AtvPrincipal = clienteVM.AtvPrincipal,
+                        Cep = clienteVM.Cep,
+                        Endereco = clienteVM.Endereco,
+                        Numero = clienteVM.Numero,
+                        Complemento = clienteVM.Complemento,
+                        Bairro = clienteVM.Bairro,
+                        Cidade = clienteVM.Cidade,
+                        UF = clienteVM.UF,
+                        Referencia = clienteVM.Referencia,
+                        Telefone = clienteVM.Telefone,
+                        Celular = clienteVM.Celular,
+                        Email = clienteVM.Email,
+                        SitCadastral = clienteVM.SitCadastral,
+                        MotDescCred = clienteVM.MotDescCred,
+                        Nire = clienteVM.Nire,
+                        NomeContador = clienteVM.NomeContador,
+                        CrcContador = clienteVM.CrcContador,
+                        NomeResponsavel = clienteVM.NomeResponsavel,
+                        CrcResponsavel = clienteVM.CrcResponsavel,
+                        TelAlternativo = clienteVM.TelAlternativo,
+                        CelAlternativo = clienteVM.CelAlternativo,
+                        EmailAlternativo = clienteVM.EmailAlternativo,
+                        LoginDteSefaz = clienteVM.LoginDteSefaz,
+                        SenhaDteSefaz = clienteVM.SenhaDteSefaz,
+                        CpfRepresentante = clienteVM.CpfRepresentante,
+                        Anotacoes = clienteVM.Anotacoes,
+                        Data_Cad = DateTime.Now,
+                        Data_Alt = DateTime.Now
 
 
-                };
-                try
-                {
-                    _empresaRepository.Adicionar(empresa);
-                    TempData["Success"] = "Registro SALVO com sucesso";
-                    return RedirectToAction("Index");
+                    };
+                    try
+                    {
+                        _clienteRepository.Adicionar(cliente);
+                        TempData["Success"] = "Registro SALVO com sucesso";
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception e)
+                    {
+                        TempData["Error"] = "Probelmas ao salvar o registro, tente novamente";
+                        return RedirectToAction("Index");
+                    }
+
+
                 }
-                catch(Exception e)
+                else
                 {
-                    TempData["Error"] = "Probelmas ao salvar o registro, tente novamente";
-                    return RedirectToAction("Index");
+                    ModelState.AddModelError("", "ERRO");
                 }
-               
-                
+
             }
             else
             {
-                ModelState.AddModelError("", "ERRO");
+                TempData["Info"] = "Cnpj já cadastrado: " + clienteVM.Cnpj.ToString();
+                return RedirectToAction("Index");
             }
+
+
+           
             this.listaEstados = await _estadoRepository.GetAllAsyncNoTracking();
             this.listaNatJuridica = await _natJuridica.GetAllAsyncNoTracking();
             this.listaRegimeJuridicos = await _regimeJuridico.GetAllAsyncNoTracking();
@@ -179,13 +218,13 @@ namespace PrecisoPRO.Controllers
             ViewBag.Estados = this.listaEstados.ToList();
             ViewBag.NatJuridica = this.listaNatJuridica.ToList();
             ViewBag.RegimeJuridico = this.listaRegimeJuridicos.ToList();
-            return View(empresaVM);
+            return View(clienteVM);
         }
 
-        public async Task<IActionResult>AlterarRegime(int id, string regimeNome)
+        public async Task<IActionResult> AlterarRegime(int id, string regimeNome)
         {
             //Seleciona a Empresa pelo ID e cria um objeto dela
-            Empresa empresa = await _empresaRepository.GetByIdAsync(id);
+            Cliente cliente = await _clienteRepository.GetByIdAsync(id);
 
             //Carrega a lista de Regimejuridico
             this.listaRegimeJuridicos = await _regimeJuridico.GetAllAsyncNoTracking();
@@ -197,15 +236,15 @@ namespace PrecisoPRO.Controllers
             var regimeJuridico = this.listaRegimeJuridicos.FirstOrDefault(r => r.Nome == regimeNome);
 
             //verifica o retorno e associa a variavel idregime
-            if(regimeJuridico != null)
+            if (regimeJuridico != null)
             {
                 int regimeId = regimeJuridico.Id;
-                empresa.RegJuridico = regimeId;
+                cliente.RegJuridico = regimeId;
             }
 
             try
             {
-                _empresaRepository.Update(empresa);
+                _clienteRepository.Update(cliente);
                 return RedirectToAction("Index");
             }
             catch (Exception e)
@@ -217,7 +256,7 @@ namespace PrecisoPRO.Controllers
 
             ViewBag.RegimesJuridicos = this.listaRegimeJuridicos.ToList();
 
-            return View(empresa);
+            return View(cliente);
         }
 
         [HttpGet]
@@ -227,9 +266,16 @@ namespace PrecisoPRO.Controllers
             return View();
         }
 
-   
-        public async Task<IActionResult> AdicionarEmpresaLote(string cnpjs)
+
+        public async Task<IActionResult> AdicionarClienteLote(string cnpjs)
         {
+            //PEGAR OS DADOS DO USUÁRIO DA SESSÃO
+            string sessaoUsuario = HttpContext.Session.GetString("sessaoUsuarioLogado");
+            if (string.IsNullOrEmpty(sessaoUsuario)) return null;
+
+            Usuario usuario = JsonConvert.DeserializeObject<Usuario>(sessaoUsuario);
+
+
             //VARIÁVEIS DE CONTROLE
             int tmenor = 0;
             int tcerto = 0;
@@ -244,34 +290,55 @@ namespace PrecisoPRO.Controllers
             int problemasAoSalvar = 0;
             //Objeto que representa o retorno da apiexterna
             List<Dictionary<string, object>> resultados = new List<Dictionary<string, object>>();
-            if (cnpjs != null) {
+            if (cnpjs != null)
+            {
                 //LISTAS PARA VERIFICAÇÕES
-                this.listaEmpresaViewGeral = await _empresaViewGeral.GetAllAsyncNoTracking();
+                this.listaClienteViewGeral = await _clienteViewGeral.GetAllAsyncNoTracking();
                 this.listaNatJuridica = await _natJuridica.GetAllAsyncNoTracking();
 
                 //receber a string
                 List<string> listaCnpjs = cnpjs.Split(',').ToList();
 
-                
+
 
                 //FOREACH PARA VARRER A LISTA DE CNPJS ENVIADA DO JS RETIRADA DA MODAL (INPUTS)
-                foreach(var cnpj in listaCnpjs)
+                foreach (var cnpj in listaCnpjs)
                 {
                     if (string.IsNullOrEmpty(cnpj) || cnpj.Length == 14)
                     {
                         //Formata o cnpj para busca
                         string cnpjForm = FormatarCNPJ(cnpj);
                         //para cada cnpj eu preciso verifiar se existe no banco: Um objeto do modelo especificado
+
                         // vai receber um registro vindo do banco, se possuir o registro ele pula para o proximo, caso contrario segue o fluxo de execução
-                        EmpresaViewGeral? empresaViewGeral = this.listaEmpresaViewGeral.FirstOrDefault(x => x.Cnpj.Equals(cnpjForm));
-                        if (empresaViewGeral == null)
+                        this.listaClienteViewGeral = this.listaClienteViewGeral.Where(x => x.Cnpj.Equals(cnpjForm) && x.EmpresaId.Equals(usuario.EmpresaId.ToString())).ToList();
+                        
+                        if (this.listaClienteViewGeral == null || this.listaClienteViewGeral.Count() == 0)
                         {
                             //Se ele nao foi encontrado na base, entao precisamos cadastra-lo. A primeira coisa é pegar os dados via API
                             // Construir a URL com base no CNPJ (para cada ncpj fornecido)
                             string apiUrl = $"https://www.receitaws.com.br/v1/cnpj/{cnpj}";
 
                             // Faça a chamada GET para a API externa
-                            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+                            //HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+                                                       
+
+                            do
+                            {
+                                response = await httpClient.GetAsync(apiUrl);
+
+                                if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                                {
+                                    Console.WriteLine("Received 429 - Too Many Requests. Waiting and retrying...");
+
+                                    // Aguardar um curto período de tempo antes de tentar novamente
+                                    await Task.Delay(1000); // Aguardar 1 segundo 
+                                }
+
+                            } while (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests);
+
+
+
                             // Verifique se a chamada foi bem-sucedida
                             if (response.IsSuccessStatusCode)
                             {
@@ -297,7 +364,7 @@ namespace PrecisoPRO.Controllers
                             }
                             else
                             {
-                                //Se der ERRO
+                                //Se der ERRO verificar se é status code 429
                                 cnpjErrado++;
                             }
 
@@ -314,12 +381,12 @@ namespace PrecisoPRO.Controllers
                         //se tiver menor que 14 ele soma
                         tmenor++;
                     }
-                    
-                   
+
+
 
 
                 }//fim for each para cada cnpj
-                
+
 
             }//fim if cnpj diferente de null
             else
@@ -331,7 +398,7 @@ namespace PrecisoPRO.Controllers
 
             //neste ponto eu vou ter a lista com todos os cnpj e todos os valores
             //vamos varrer o dicionario e continuar o fluxo
-            for(int i=0; i<(resultados.Count()); i++)
+            for (int i = 0; i < (resultados.Count()); i++)
             {
                 //verificar se deu alguma responsa ERROR
                 if (resultados[i]["status"].Equals("ERROR"))
@@ -346,7 +413,7 @@ namespace PrecisoPRO.Controllers
                     string socioRespEmpresa = BuscaSocioRet(resultados[i]["qsa"].ToString());
 
 
-                
+
                     //tratar a string telefone
                     string telefone = resultados[i]["telefone"].ToString();
 
@@ -379,7 +446,7 @@ namespace PrecisoPRO.Controllers
                     }
 
                     //MONTAR O OBJETO PARA SER SALVO
-                    var empresa = new Empresa
+                    var cliente = new Cliente
                     {
 
                         Cnpj = resultados[i]["cnpj"].ToString(),
@@ -395,20 +462,20 @@ namespace PrecisoPRO.Controllers
                         Cidade = resultados[i]["municipio"].ToString(),
                         UF = resultados[i]["uf"].ToString(),
                         NomeResponsavel = socioRespEmpresa,
-                        Principal = 0,
                         Telefone = telefoneOrganizado,
                         Email = resultados[i]["email"].ToString(),
                         SitCadastral = resultados[i]["situacao"].ToString(),
                         MotDescCred = resultados[i]["motivo_situacao"].ToString(),
                         DataAbertura = resultados[i]["abertura"].ToString(),
                         Data_Cad = DateTime.Now,
-                        Data_Alt = DateTime.Now
+                        Data_Alt = DateTime.Now, 
+                        EmpresaId = usuario.EmpresaId
 
                     };
                     try
                     {
-                        _empresaRepository.Adicionar(empresa);
-                         tcerto++;
+                        _clienteRepository.Adicionar(cliente);
+                        tcerto++;
                     }
                     catch (Exception e)
                     {
@@ -423,12 +490,12 @@ namespace PrecisoPRO.Controllers
             ///*VERIFICA AS VARIÁVEIS DE CONTROLE PARA RETORNAR À INDEX CADA ESTADO DO CADASTRO*/
             if (tcerto > 0)
             {
-                if(problemasAoSalvar > 0)
+                if (problemasAoSalvar > 0)
                 {
                     if (cnpjErrado > 0)
                     {
                         TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
-                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString() + " - Não salvo: "+problemasAoSalvar.ToString();
+                        TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString() + " - Não salvo: " + problemasAoSalvar.ToString();
                     }
                     else
                     {
@@ -449,7 +516,7 @@ namespace PrecisoPRO.Controllers
                         TempData["Success"] = "Cnpjs Salvos: " + tcerto.ToString();
                     }
                 }
-                
+
 
 
             }
@@ -474,7 +541,7 @@ namespace PrecisoPRO.Controllers
                         TempData["Error"] = "Cnpjs Inválidos ou com problemas: " + cnpjErrado.ToString();
                     }
                 }
-               
+
 
             }
             if (cnpjEncontrado > 0)
@@ -488,13 +555,13 @@ namespace PrecisoPRO.Controllers
 
         public async Task<IActionResult> Detalhes()
         {
-            this.listaEmpresas = await _empresaRepository.GetAll();
+            this.listaClientes = await _clienteRepository.GetAll();
             return PartialView();
         }
 
         public string FormatarCNPJ(string cnpj)
         {
-           
+
             // Formatar o CNPJ
             string cnpjFormatado = $"{cnpj.Substring(0, 2)}.{cnpj.Substring(2, 3)}.{cnpj.Substring(5, 3)}/{cnpj.Substring(8, 4)}-{cnpj.Substring(12, 2)}";
 
@@ -528,9 +595,9 @@ namespace PrecisoPRO.Controllers
             return socioResp;
         }
 
-       
 
-        
+
+
     }
 }
 

@@ -15,6 +15,8 @@ namespace PrecisoPRO.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
 
+        public DbSet<Cliente> Clientes { get; set; }
+
         public DbSet<Estado> Estados { get; set; }
 
        public DbSet<AssociarEmpUf> AssociarEmpresasUf { get; set; }
@@ -25,9 +27,11 @@ namespace PrecisoPRO.Data
 
         public DbSet<EmpresaViewGeral> EmpresasViewGeral { get; set; }
 
-        public DbSet<CndEmpresaEstadual> CndEmpresaEstaduais { get; set; }
+        public DbSet<ClienteViewGeral> ClientesViewGeral { get; set; }
 
-        public DbSet<CndEmpresaFederal> CndEmpresaFederais { get; set; }
+        public DbSet<CndClienteEstadual> CndClientesEstaduais { get; set; }
+
+        public DbSet<CndClienteFederal> CndClientesFederais { get; set; }
 
 
 

@@ -41,10 +41,10 @@
         @foreach (var item in Model)
         {
             <tr class="prn-resp-td">
-                <td class="border-end">@item.Empresa.Razao</td>
-                <td class="border-end ">@item.Empresa.Cnpj</td>
-                <td class="border-end prn-tb-resp">@item.Empresa.Cidade</td>
-                <td class="border-end text-center prn-tb-resp">@item.Empresa.UF</td>
+                <td class="border-end">@item.Cliente.Razao</td>
+                <td class="border-end ">@item.Cliente.Cnpj</td>
+                <td class="border-end prn-tb-resp">@item.Cliente.Cidade</td>
+                <td class="border-end text-center prn-tb-resp">@item.Cliente.UF</td>
                 <td class="border-end text-center prn-tb-resp">@item.CodControle</td>
                 <td class="border-end text-center prn-tb-resp">@item.DataEmissao</td>
                 <td class="border-end text-center prn-tb-resp">@item.DataVenc</td>
@@ -108,7 +108,7 @@
                  </td>
                 <td class="border-end text-center prn-tb-resp">
 
-                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar CND" class="border-0" data-razao="@item.Empresa.Razao" data-cnpj="@item.Empresa.Cnpj" data-value="@item.PdfCnd" onclick="convertAndDownload(this.getAttribute('data-value'),this.getAttribute('data-cnpj'), this.getAttribute('data-razao'), false)">
+                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar CND" class="border-0" data-razao="@item.Cliente.Razao" data-cnpj="@item.Cliente.Cnpj" data-value="@item.PdfCnd" onclick="convertAndDownload(this.getAttribute('data-value'),this.getAttribute('data-cnpj'), this.getAttribute('data-razao'), false)">
                         <img src="~/lib/IMG/pngegg.png" alt="Ícone" style="width: 36px; height: 38px; margin-right: 5px;">
                     </button>
                 </td>

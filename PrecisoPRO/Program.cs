@@ -18,6 +18,8 @@ builder.Services.AddScoped<IRegimeJuridico, RegimeJuridicoRepository>();
 builder.Services.AddScoped<IEmpresaViewGeral, EmpresaViewGeralRepository>();
 builder.Services.AddScoped<ICndEmpresaEstadual, CndEmpresaEstadualRepository>();
 
+builder.Services.AddScoped<ICndEmpresaFederal, CndEmpresaFederalRepository>();
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 

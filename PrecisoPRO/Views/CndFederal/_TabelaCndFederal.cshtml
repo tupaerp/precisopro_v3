@@ -1,0 +1,135 @@
+﻿<table class="table table-sm table-striped table-responsive table-hover align-items-center">
+    <thead class="table-dark">
+        <tr>
+            <th class="text-center border-end fw-light" scope="col">Razão Social</th>
+            <th class="text-center border-end fw-light" scope="col">CNPJ</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Cidade</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Estado</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Controle</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Data Emissão</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Data Vencimento</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Dias para Vencer</th>
+
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">Status</th>
+            <th class="text-center border-end fw-light prn-tb-resp" scope="col">CND</th>
+            <th class="text-center border-end fw-light" scope="col">Ações</th>
+        </tr>
+    </thead>
+    <tbody class="align-middle">
+        <!--
+            //O Statuso pode ser:
+        /**
+         * 1 - PROCESSAMENTO OK - CERTIDÃO ENCONTRADA
+         * 2 - PROCESSAMENTO OK - CERTIDÃO EMITIDA
+         * 3 - PROCESSAMENTO OK - CERTIDÃO NÃO EMITIDA
+         * 4 - PROCESSAMENTO OK - CERTIDAO NAO EMITIDA. SITUÃÇÃO CADASTRAL IMPEDITIVA
+         * 5 - PROCESSAMENTO OK - ANALISE INCONSISTENTE. TENTE NOVAMENTE
+         * 6 - PROCESSAMENTO OK - BASE DE APOIO A VERIFICACAO INDISPONIVEL - TENTE NOVAMENTE
+         * 7 - EM PREOCESSAMENTO: RETORNE NOVAMENTE COM A CHAVE
+         * 8 - CONTRIBUINTE NÃO CADASTRADO
+         * 9 - PARAMETROS INVÁLIDOS
+         * 10 - TIPO DE CONTRIBUINTE INVÁLIDO
+         * 11 - IDENTIFICAÇÃO DO CONTRIBUINTE INVÁLIDO
+         * 12 - CODIGO DE IDENTIFICACAO INVALIDO
+         * 13 - CHAVE INVÁLIDA
+         * 14 - CHAVE NÃO ENCONTRADA
+         * 15 - CHAVE PARA IMOVEL RURAL
+         * 99 - ERRO NO SERVIDOR
+         */
+        -->
+
+        @foreach (var item in Model)
+        {
+            <tr class="prn-resp-td">
+                <td class="border-end">@item.Empresa.Razao</td>
+                <td class="border-end ">@item.Empresa.Cnpj</td>
+                <td class="border-end prn-tb-resp">@item.Empresa.Cidade</td>
+                <td class="border-end text-center prn-tb-resp">@item.Empresa.UF</td>
+                <td class="border-end text-center prn-tb-resp">@item.CodControle</td>
+                <td class="border-end text-center prn-tb-resp">@item.DataEmissao</td>
+                <td class="border-end text-center prn-tb-resp">@item.DataVenc</td>
+                <td class="border-end text-center prn-tb-resp">@item.DiasRestantes</td>
+               @*  <td class="border-end text-center prn-tb-resp">@item.Status</td> *@
+     
+                <td class="border-end text-center prn-tb-resp">
+                    @switch (Convert.ToInt32(@item.Status))
+                    {
+                        case 1:
+                            @:<a tabindex="0" class="btn btn-sm btn-primary" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="1 - PROCESSAMENTO OK" data-bs-content="CERTIDÃO ENCONTRADA: Emita em outro processamento e disponibilizada">ENCONTRADA</a>
+                            break;
+                        case 2:
+                            @:<a tabindex="0" class="btn btn-sm btn-success" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="2 - PROCESSAMENTO OK" data-bs-content="CERTIDÃO EMITIDA: A CND ainda não havia sido emitida anteriormente, agora está disponível">EMITDA</a>
+                            break;
+                        // Adicione mais casos conforme necessário
+                        case 3:
+                            @:<a tabindex="0" class="btn btn-sm btn-warning" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="3 - PROCESSAMENTO OK" data-bs-content="CERTIDÃO NÃO EMITIDA: Por algum motivo a CND não está disponível para emissão">NÃO EMITIDA</a>
+                            break;
+                        case 4:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="4 - PROCESSAMENTO OK" data-bs-content="CERTIDAO NAO EMITIDA. Sutuação CADASTRAL IMPEDITIVA NA EMPRESA">IMPEDIDA</a>
+                            break;
+                        case 5:
+                            @:<a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="5 - PROCESSAMENTO OK" data-bs-content="ANALISE INCONSISTENTE. TENTE NOVAMENTE">TENTE NOVAMENTE</a>
+                            break;
+                        case 6:
+                            @:<a tabindex="0" class="btn btn-sm btn-info" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="6 - PROCESSAMENTO OK" data-bs-content="BASE DE APOIO A VERIFICACAO INDISPONÍVEL - TENTE NOVAMENTE">TENTE NOVAMENTE</a>
+                            break;
+                        case 7:
+                            @:<a tabindex="0" class="btn btn-sm btn-secondary" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="7 - EM PROCESSAMENTO" data-bs-content="RETORNE NOVAMENTE COM A CHAVE">INSERIR CHAVE</a>
+                            break;
+                        case 8:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="8 - CONTRIBUINTE NÃO CADASTRADO" data-bs-content="CNPJ NÃO CADASTRADO">NÃO CADASTRADA(CNPJ)</a>
+                            break;
+                        case 9:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="9 - PARAMETROS INVÁLIDOS" data-bs-content="ALGUM PARAMÊTRO INVÁLIDO">PARAMÊTROS INVÁLIDOS</a>
+                            break;
+                        case 10:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="10 - TIPO DE CONTRIBUINTE INVÁLIDO" data-bs-content="TIPO DE CONTRIBUINT INVÁLIDO">TIPO INVÁLIDO</a>
+                            break;
+                        case 11:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="11 - CNPJ DO CONTRIBUINTE INVÁLIDO" data-bs-content="CNPJ INVÁLIDO">CNPJ INVÁLIDO</a>
+                            break;
+                        case 12:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="12 - CODIGO DE IDENTIFICACAO INVÁLIDO" data-bs-content="O CÓDIGO DE IDENTIFICAÇÃO FOI INFORMADO ERRADO">CÓDIGO INVÁLIDO</a>
+                            break;
+                        case 13:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="13 - CHAVE INVÁLIDA" data-bs-content="A CHAVE PARA UMA NOVA CONSULTA ESTÁ INCORRETA">CHAVE INVÁLIDA</a>
+                            break;
+                        case 14:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="14 - CHAVE NÃO ENCONTRADA" data-bs-content="A CHAVE PARA UMA NOVA CONSULTA NÃO FOI ENCONTRADA">CHAVE NÃO ENCONTRADA</a>
+                            break;
+                        case 99:
+                            @:<a tabindex="0" class="btn btn-sm btn-danger" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="99 - ERRO NO SERVIDOR" data-bs-content="PROBLEMAS NO SERVIDOR, TENTE NOVAMENTE MAIS TARDE">SERVIDOR INDISPONÍVEL</a>
+                            break;
+                        default:
+                            @:STATUS_DESCONHECIDO
+                            break;
+                    }
+
+                 </td>
+                <td class="border-end text-center prn-tb-resp">
+
+                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar CND" class="border-0" data-razao="@item.Empresa.Razao" data-cnpj="@item.Empresa.Cnpj" data-value="@item.PdfCnd" onclick="convertAndDownload(this.getAttribute('data-value'),this.getAttribute('data-cnpj'), this.getAttribute('data-razao'), false)">
+                        <img src="~/lib/IMG/pngegg.png" alt="Ícone" style="width: 36px; height: 38px; margin-right: 5px;">
+                    </button>
+                </td>
+
+
+                <td class="prn-border-table text-center">
+                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Alterar Registro" class="btn btn-outline-primary border-0" data-value="@item.Id" onclick="chamarEdit(@item.Id,false)"><i class="fas fa-edit"></i></button>
+                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Visualizar Registro" class="btn btn-outline-success border-0" data-value="@item.Id" onclick="chamarDetails(@item.Id,false)"><i class="fas fa-eye"></i> </button>
+                    <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Apagar Registro" class="btn btn-outline-danger border-0" data-value="@item.Id" onclick="chamarDelete(@item.Id,false)"><i class="fas fa-trash-alt"></i> </button>
+                </td>
+
+
+
+            </tr>
+
+
+        }
+
+
+
+
+    </tbody>
+</table>
+

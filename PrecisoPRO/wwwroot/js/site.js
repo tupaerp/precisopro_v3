@@ -26,7 +26,8 @@ function limparInputs() {
 
 //mascaras
 //mascaras
-$(document).ready(function () {
+
+$(function () {
     $('.date').mask('99/99/9999');
     $('.time').mask('00:00:00');
     $('#cep').mask('99.999-999');
@@ -88,15 +89,10 @@ function buscarCNDs() {
 //adicionar registro de empresas em lote via api
 function chamarIncluirEmLote(id) {
    
-    
-    
+        
     var cont = document.querySelector(".pro-titulo"); //pega o titulo
-
     var controller = cont.innerText;
-
     var url = "/" + controller + "/IncluirLote/" + id;
-
-
     $("#modal").load("/" + controller + "/IncluirLote/" + id, function () {
 
         $('#modal').modal("show");
@@ -249,5 +245,88 @@ $(document).ready(function () {
 
 
 
+
+});
+
+
+// Função para converter dados em formato base64 para Blob
+function base64ToBlob(base64Data, contentType) {
+    contentType = contentType || '';
+    const sliceSize = 1024;
+    const byteCharacters = atob(base64Data);
+    const byteArrays = [];
+
+    // Loop para dividir os dados em blocos de tamanho sliceSize
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+
+        // Loop para converter caracteres para números
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        // Criação de um objeto Uint8Array a partir dos números obtidos
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    // Retorna um novo objeto Blob a partir dos arrays de bytes
+    return new Blob(byteArrays, { type: contentType });
+}
+
+// Função para baixar um PDF a partir de dados em formato base64
+function downloadPDFFromBase64(base64Data, fileName) {
+    try {
+        // Converte os dados em formato base64 para um objeto Blob
+        const blob = base64ToBlob(base64Data, 'application/pdf');
+
+        // Cria um link temporário para download do PDF
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName || 'output.pdf';
+
+        // Adiciona o link ao DOM e simula um clique para iniciar o download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        console.log(`PDF saved as: ${fileName}`);
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+    }
+}
+
+// Função para ser chamada ao clicar no botão de conversão
+function convertAndDownload(PdfCnd, cnpj, empresa) {
+    // Obtém os dados em formato base64 do elemento de entrada
+    //const base64Data = document.getElementById('base64Input').value.trim(); //base64Input ##Colocar a variável##
+    //Limpar CNPJ
+    var cnpjLimpo = cnpj.replace(/[^\d]/g, '');
+
+    //Pegar primeiro nome
+    // Divida a string usando espaços como delimitadores
+    var partes = empresa.split(' ');
+
+    // O primeiro "nome" é a primeira parte da string
+    var primeiroNome = partes[0];
+
+    var cnpjRazao = primeiroNome+'_'+ cnpj;
+    alert(cnpjRazao);
+
+    const base64Data = PdfCnd;
+
+    // Verifica se há dados antes de iniciar a conversão e o download
+    if (base64Data) {
+        downloadPDFFromBase64(base64Data, cnpjRazao+'.pdf');
+    } else {
+        alert('Insira o dado Base64 antes de converter.');
+    }
+}
+
+
+$(function(){
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
 });

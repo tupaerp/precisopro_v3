@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using System;
 namespace PrecisoPRO.Models
 {
     [Table("CNDEMPRESAS_F")]
@@ -50,6 +50,25 @@ namespace PrecisoPRO.Models
             get { return Data_Venc?.ToShortDateString(); }
         }
 
+        //Calcular dias restante
+        public string DiasRestantes
+        {
+            get
+            {
+                int diasRestantes = CalcularDiasRestantes();
+                return $"{diasRestantes} dias";
+            }
+        }
+
+        // Método privado para calcular os dias restantes
+        private int CalcularDiasRestantes()
+        {
+            DateTime dataAtual = DateTime.Now;
+            TimeSpan diferenca = (TimeSpan)(Data_Venc - dataAtual);
+            return (int)Math.Ceiling(diferenca.TotalDays);
+        }
+
+
         //O Statuso pode ser:
         /**
          * 1 - PROCESSAMENTO OK - CERTIDÃO ENCONTRADA
@@ -85,7 +104,7 @@ namespace PrecisoPRO.Models
         public string? CodControle { get; set; }
 
         [Display(Name = "Arquivo PDF")]
-        [Column("ARQUIVO_PDF")]
+        [Column("DOC_PDF")]
         public string? PdfCnd { get; set; }
     }
 }

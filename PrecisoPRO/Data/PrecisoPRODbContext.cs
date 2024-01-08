@@ -25,7 +25,9 @@ namespace PrecisoPRO.Data
 
         public DbSet<EmpresaViewGeral> EmpresasViewGeral { get; set; }
 
-        public DbSet<CndEmpresaEstadual> CndEmpresaEstaduais { get; set; }  
+        public DbSet<CndEmpresaEstadual> CndEmpresaEstaduais { get; set; }
+
+        public DbSet<CndEmpresaFederal> CndEmpresaFederais { get; set; }
 
 
 

@@ -1,0 +1,240 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@using X.PagedList
+@model X.PagedList.IPagedList<CndEmpresaFederal>
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "CndFederal";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card align-middle">
+                <div class="card-header align-items-center">
+                    <span class="fs-5 fw-bolder text-black opacity-75">CND FEDERAL de Empresas - REGISTROS</span>
+
+                </div>
+                <div class="card-body">
+                    <!--LINHA PARA BUSCAS-->
+                    <div class="row border-bottom">
+                        <div class="row align-items-center">
+                            @if (TempData["Error"] != null)
+                            {
+                                <div class="col=lg-12">
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-solid  fa-triangle-exclamation fs-5"></i> </strong>  @TempData["Error"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+
+
+
+                            }
+                            @if (TempData["Info"] != null)
+                            {
+                                <div class="col=lg-12">
+                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-solid fa-circle-info fs-5"></i> </strong>  @TempData["Info"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+
+
+
+                            }
+
+
+
+
+                            @if (TempData["Success"] != null)
+                            {
+                                <div class="col=lg-12">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa-regular fa-thumbs-up fs-5"></i></strong> @TempData["Success"]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+
+
+
+
+                            }
+                        </div>
+                        <form asp-controller="CndFederal" asp-action="index" class="col-md-12">
+                            <!--campos-->
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <label for="razao" class="form-label">CNPJ</label>
+                                    @if (ViewBag.Cnpj == null)
+                                    {
+                                        @Html.TextBox("cnpj", null, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite o CNPJ" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("cnpj", (string)ViewBag.Cnpj, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite o CNPJ" })
+                                    }
+
+
+
+
+                                </div>
+                                <div class="col-md-8">
+                                    <label for="razao" class="form-label">Razão</label>
+                                    @if (ViewBag.Razao == null)
+                                    {
+                                        @Html.TextBox("razao", null, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Razão Social" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("razao", (string)ViewBag.Razao, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Razão Social" })
+                                    }
+
+
+
+
+                                </div>
+                                
+                                
+
+
+                            </div>
+
+                            <div class="row g-2 mt-2">
+
+                                <div class="col-md-4">
+                                    <label for="fantasia" class="form-label">Cidade</label>
+
+                                    @if (ViewBag.Cidade == null)
+                                    {
+                                        @Html.TextBox("cidade", null, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Cidade" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBox("cidade", (string)ViewBag.Cidade, new { @class = "form-control", onkeyup = "maiuscula(this);", placeholder = "Digite a Cidade" })
+                                    }
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="inputState" class="form-label">Estado</label>
+                                    <select class="form-select" name="estado" id="estado">
+                                        <option value="">Escolha a UF</option>
+                                        @foreach (var item in ViewBag.Estados)
+                                        {
+                                            if (item.Uf == ViewBag.Estado)
+                                            {
+                                                <option selected value="@item.Uf">@item.Descricao</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Uf">@item.Descricao</option>
+                                            }
+                                        }
+                                    </select>
+
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="inputState" class="form-label">Filtrar</label>
+                                    <select class="form-select" name="status" id="status">
+                                        <option value="">Escolha o Status</option>
+                                        <option value="1">PROCESSAMENTO OK - CERTIDÃO ENCONTRADA</option>
+                                        <option value="2">PROCESSAMENTO OK - CERTIDÃO EMITIDA</option>
+                                        <option value="3">PROCESSAMENTO OK - CERTIDÃO NÃO EMITIDA</option>
+                                        <option value="4">PROCESSAMENTO OK - CERTIDAO NAO EMITIDA. SITUAÇÃO CADASTRAL IMPEDITIVA</option>
+                                        <option value="5">PROCESSAMENTO OK - ANALISE INCONSISTENTE. TENTE NOVAMENTE</option>
+                                        <option value="6">PROCESSAMENTO OK - BASE DE APOIO A VERIFICACAO INDISPONIVEL - TENTE NOVAMENTE</option>
+                                        <option value="7">EM PREOCESSAMENTO: RETORNE NOVAMENTE COM A CHAVE</option>
+                                        <option value="8">CONTRIBUINTE NÃO CADASTRADO</option>
+                                        <option value="9">PARAMETROS INVÁLIDOS</option>
+                                        <option value="10">TIPO DE CONTRIBUINTE INVÁLIDO</option>
+                                        <option value="11">IDENTIFICAÇÃO DO CONTRIBUINTE INVÁLIDO</option>
+                                        <option value="12">CODIGO DE IDENTIFICACAO INVALIDO</option>
+                                        <option value="13">CHAVE INVÁLIDA</option>
+                                        <option value="14">CHAVE NÃO ENCONTRADA</option>
+                                        <option value="15">CHAVE PARA IMOVEL RURAL</option>
+                                        <option value="99">ERRO NO SERVIDOR</option>
+                                    </select>
+
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mt-2 mb-2">
+
+
+                                <div id="botoes-acao" class="col-md-12">
+
+                                    <div>
+
+                                        <a onclick="buscarCNDs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Novo Registro" class="btn btn-outline-success align-middle float-lg-end me-2"><i class="fa-solid fs-6 fa-plus"></i></a>
+                                        <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Buscar" class="btn btn-outline-primary align-middle float-md-end me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                        <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Baixar" class="btn btn-outline-secondary align-middle float-md-end me-2"> <i class="fa-solid fa-download"></i></button>
+                                        <a onclick="limparInputs()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Limpar" class="btn btn-outline-warning align-middle float-md-end me-2"><i class="fa-solid fa-broom"></i></a>
+                                        
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </form><!--fim linha busca-->
+                    </div>
+                    <!--Linha para tabela-->
+                    <div class="row mt-2">
+                        <div class="col-md-12 table-responsive">
+                            <partial name="_TabelaCndFederal" />
+                        </div>
+                    </div> <!--fim linha tabela-->
+                </div>
+                <!--Botoes-->
+                <div class="card-footer ">
+                    <div class="container-fluid ">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+
+                                <span> Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount - Total de registros: @Model.TotalItemCount</span>
+
+                            </div>
+                            <div class="col-6">
+                                <span style="float:right;">
+                                    @Html.PagedListPager(Model,
+                                             numPagina => Url.Action("Index", new
+                                             {
+                                                 numPagina,
+                                                 razao = ViewBag.Razao,
+                                                 cidade = ViewBag.Cidade,
+                                                 fantasia = ViewBag.Fantasia,
+                                                 estado = ViewBag.Estado
+                                             }),
+                                             new PagedListRenderOptions()
+                                    {
+                                        LiElementClasses = new List<string> { "page-item" }
+                                    }
+                                             )
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<section>
+    <!-- MODAL-->
+    <div class="modal fade" id="modal" aria-hidden="true">
+    </div>
+</section>
+
+
